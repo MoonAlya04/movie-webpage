@@ -2,13 +2,16 @@ let api_key = "api_key=450de2ccb3594f7792ac2434c91755ce";
 let img_url = "https://image.tmdb.org/t/p/w500";
 let img_url_original = "https://image.tmdb.org/t/p/original";
 let sweiper = document.querySelector("swiper-container");
+let animationURL = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
+let movieCards = document.querySelector(".cards-for-movies");
+let cartoonCards = document.querySelector(".cards-for-cartoons");
 
 fetch("https://api.themoviedb.org/3/movie/popular?" + api_key)
     .then((response) => response.json())
-    .then((data) => printCards(data.results))
+    .then((res) => printSliderMovies(res.results))
     .catch((err) => console.error(err));
 
-function printCards(arr) {
+function printSliderMovies(arr) {
     arr.forEach((e) => {
         let card = document.createElement("swiper-slide");
         card.classList.add("slider");
@@ -17,7 +20,7 @@ function printCards(arr) {
                 img_url_original + e.backdrop_path
             })">
             <div class="slider__container" >
-                <h4>MOST POPULAR IN THIS WEEK</h4>
+                <h4 class="titles">MOST POPULAR IN THIS WEEK</h4>
                 <img src="${img_url + e.poster_path}" alt="${e.title}" />
                 <h5>${e.title}</h5>
                 <p>${e.overview}</p>
@@ -39,6 +42,92 @@ function printCards(arr) {
         sweiper.append(card);
     });
 }
+
+fetch("https://api.themoviedb.org/3/movie/popular?" + api_key)
+    .then((response) => response.json())
+    .then((res) => MovieCards(res.results.slice(0, 6)))
+    .catch((err) => console.error(err));
+
+function MovieCards(arr) {
+    arr.forEach((e) => {
+        let card = document.createElement("div");
+        card.classList.add("movie-card");
+        card.innerHTML = `
+                            <div class="image-info">
+                                <div class="icons">
+                                    <i class="fa-regular fa-thumbs-up"></i>
+                                    <i class="fa-regular fa-eye"></i>
+                                    <i class="fa-solid fa-indent"></i>
+                                </div>
+                                <img
+                                    src="${img_url + e.poster_path}"
+                                    alt=""
+                                />
+                            </div>
+                            <div class="movie-info">
+                                <h4>${e.title}</h4>
+                                <div class="rating-stars"></div>
+                                <span>${e.release_date}</span>
+                            </div>
+            `;
+        let ratingContainer = card.querySelector(".rating-stars");
+        let stars = createStars(e.vote_average, 10);
+        ratingContainer.append(stars);
+        movieCards.append(card);
+    });
+}
+
+fetch(animationURL)
+    .then((response) => response.json())
+    .then((data) => {
+        printCartoonCards(data.results.slice(0, 6));
+    })
+    .catch((err) => console.error(err));
+
+    function printCartoonCards(arr) {
+        arr.forEach((e) => {
+            let card = document.createElement("div");
+            card.classList.add("movie-card");
+            card.innerHTML = `
+                                <div class="image-info">
+                                    <div class="icons">
+                                        <i class="fa-regular fa-thumbs-up"></i>
+                                        <i class="fa-regular fa-eye"></i>
+                                        <i class="fa-solid fa-indent"></i>
+                                    </div>
+                                    <img
+                                        src="${img_url + e.poster_path}"
+                                        alt=""
+                                    />
+                                </div>
+                                <div class="movie-info">
+                                    <h4>${e.title}</h4>
+                                    <div class="rating-stars"></div>
+                                    <span>${e.release_date}</span>
+                                </div>
+                `;
+            let ratingContainer = card.querySelector(".rating-stars");
+            let stars = createStars(e.vote_average, 10);
+            ratingContainer.append(stars);
+            cartoonCards.append(card);
+        });
+    }
+
+// function getCast(movieId, button) {
+//     let castURL = `https://api.themoviedb.org/3/movie/${movieId}/credits?${api_key}`;
+
+//     fetch(castURL)
+//         .then((response) => response.json())
+//         .then((data) => {
+//             let castNames = data.cast
+//                 .slice(0, 5)
+//                 .map((actor) => actor.name)
+//                 .join(", ");
+//             button.nextElementSibling.innerText =
+//                 castNames || "Դերասաններ չկան 😕";
+//         })
+//         .catch((err) => console.error("Error fetching cast:", err));
+// }
 
 // Աստղիկների գեներացման ֆունկցիա
 function createStars(rating, maxRating = 10) {

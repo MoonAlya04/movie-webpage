@@ -106,14 +106,10 @@ header {
     color: #ff0000;
 }
 
-main {
-    height: 100%;
-}
-
 .swiper_container {
     position: relative;
     width: 100%;
-    
+
 }
 
 swiper-container {
@@ -151,14 +147,14 @@ swiper-container {
     margin: 8px 0;
 }
 
-.slider__container h4 {
+.titles {
     border-left: white 1px solid;
     max-width: 412px;
     padding: 10px;
+    color: #fff;
     font-weight: 500;
     font-size: 16px;
     line-height: 120%;
-
 }
 
 .slider__container h5 {
@@ -201,7 +197,7 @@ swiper-container {
 
 /* Աստղիկների ստիլեր */
 .rating-stars {
-    margin: 5px 0 10px 0 ;
+    margin: 5px 0 10px 0;
 }
 
 .star {
@@ -227,4 +223,81 @@ swiper-container {
     width: 50%;
     overflow: hidden;
     color: #ffd700;
+}
+
+#popular-movies,
+#popular-cartoons {
+    background-color: #17171d;
+    width: 100%;
+}
+
+.popular-movies__container,
+.popular-cartoons__container {
+    padding: 25PX 65px ;
+}
+
+.cards-for-movies,
+.cards-for-cartoons {
+    display: flex;
+    justify-content: space-around;
+    padding: 25px 0;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.movie-card {
+    color: #D4D4D8;
+    width: 193px;
+    height: 400px;
+    background-color: #2F2F2F;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.movie-card img {
+    width: 100%;
+    height: 284px;
+    border-radius: 4px 4px 0 0;
+
+}
+
+.icons {
+    background-color: #18181B80;
+    width: 96px;
+    height: 32px;
+    position: absolute;
+    z-index: 55;
+    font-size: 24px;
+    border-bottom-left-radius: 4px;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px;
+    transition: 500ms;
+}
+
+.icons:hover {
+    background-color: #18181B;
+}
+
+.fa-thumbs-up:hover {
+    color: #FF0000;
+}
+
+.fa-eye:hover {
+    color: #FFC800;
+}
+
+.fa-indent:hover {
+    color: #00B8D9;
+}
+
+.movie-info {
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
