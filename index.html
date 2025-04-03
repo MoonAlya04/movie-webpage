@@ -17,10 +17,16 @@
                     <div class="logo">
                         <img src="img/ReelPath.png" alt="" />
                     </div>
-                    <div class="search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search in RP" />
-                    </div>
+                    <form class="search">
+                        <button type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                        <input
+                            id="searchInp"
+                            type="text"
+                            placeholder="Search in RP"
+                        />
+                    </form>
                 </div>
                 <div class="headers-second-half">
                     <nav>
@@ -46,7 +52,7 @@
                 </div>
             </div>
         </header>
-        <main>
+        <main id="main">
             <section id="slider">
                 <div class="swiper-container">
                     <swiper-container
@@ -74,8 +80,17 @@
                     <div class="cards-for-cartoons"></div>
                 </div>
             </section>
+            <section id="genres">
+                <div class="genres__container">
+                    <h4 class="titles">GENRES</h4>
+                    <div class="cards-for-genres"></div>
+                </div>
+            </section>
         </main>
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
         <script src="script.js"></script>
     </body>
 </html>
+
+<!-- autoplay-delay="2500"
+autoplay-disable-on-interaction="false" -->

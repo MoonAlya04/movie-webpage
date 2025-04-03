@@ -5,6 +5,13 @@ let sweiper = document.querySelector("swiper-container");
 let animationURL = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
 let movieCards = document.querySelector(".cards-for-movies");
 let cartoonCards = document.querySelector(".cards-for-cartoons");
+let genre = document.querySelector(".cards-for-genres");
+let searchInp = document.querySelector("#searchInp");
+let form = document.querySelector(".search");
+let popupBody = document.querySelector(".card-popups");
+let main = document.getElementById("#main");
+let baseUrl = "https://api.themoviedb.org/3/";
+let searchUrl = baseUrl + "search/movie?" + api_key;
 
 fetch("https://api.themoviedb.org/3/movie/popular?" + api_key)
     .then((response) => response.json())
@@ -79,16 +86,16 @@ function MovieCards(arr) {
 
 fetch(animationURL)
     .then((response) => response.json())
-    .then((data) => {
-        printCartoonCards(data.results.slice(0, 6));
+    .then((res) => {
+        printCartoonCards(res.results.slice(0, 6));
     })
     .catch((err) => console.error(err));
 
-    function printCartoonCards(arr) {
-        arr.forEach((e) => {
-            let card = document.createElement("div");
-            card.classList.add("movie-card");
-            card.innerHTML = `
+function printCartoonCards(arr) {
+    arr.forEach((e) => {
+        let card = document.createElement("div");
+        card.classList.add("movie-card");
+        card.innerHTML = `
                                 <div class="image-info">
                                     <div class="icons">
                                         <i class="fa-regular fa-thumbs-up"></i>
@@ -106,30 +113,30 @@ fetch(animationURL)
                                     <span>${e.release_date}</span>
                                 </div>
                 `;
-            let ratingContainer = card.querySelector(".rating-stars");
-            let stars = createStars(e.vote_average, 10);
-            ratingContainer.append(stars);
-            cartoonCards.append(card);
-        });
-    }
+        let ratingContainer = card.querySelector(".rating-stars");
+        let stars = createStars(e.vote_average, 10);
+        ratingContainer.append(stars);
+        cartoonCards.append(card);
+    });
+}
 
-// function getCast(movieId, button) {
-//     let castURL = `https://api.themoviedb.org/3/movie/${movieId}/credits?${api_key}`;
+let timerId;
+searchInp.addEventListener("input", (e) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+        fetch(`https://api.themoviedb.org/3/search/movie?${api_key}=&query
+            =${searchInp.value}`)
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.results.length === 0) {
+                    main.innerHTML = `There isn't from that products`;
+                } else {
+                    MovieCards(res.results);
+                }
+            });
+    }, 1000);
+});
 
-//     fetch(castURL)
-//         .then((response) => response.json())
-//         .then((data) => {
-//             let castNames = data.cast
-//                 .slice(0, 5)
-//                 .map((actor) => actor.name)
-//                 .join(", ");
-//             button.nextElementSibling.innerText =
-//                 castNames || "Դերասաններ չկան 😕";
-//         })
-//         .catch((err) => console.error("Error fetching cast:", err));
-// }
-
-// Աստղիկների գեներացման ֆունկցիա
 function createStars(rating, maxRating = 10) {
     const starsContainer = document.createElement("div");
     starsContainer.className = "stars";
@@ -160,4 +167,21 @@ function createStars(rating, maxRating = 10) {
     }
 
     return starsContainer;
+}
+
+fetch("https://api.themoviedb.org/3/genre/movie/list?" + api_key)
+    .then((response) => response.json())
+    .then((res) => getGanres(res.genres.slice(0, 8)))
+    .catch((err) => console.error(err));
+
+function getGanres(arr) {
+    arr.forEach((e) => {
+        let card = document.createElement("div");
+        card.classList.add("genres");
+        card.innerHTML = `
+                <div class="genres-img"></div>
+                <div class="genres-info">${e.name}</div>
+                    `;
+        genre.append(card);
+    });
 }
