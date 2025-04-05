@@ -340,7 +340,8 @@ swiper-container {
     flex-direction: column;
 }
 
-.genres {
+.genres,
+.movies-genre>button {
     width: 120px;
     height: 50px;
     border-radius: 4px;
@@ -348,10 +349,14 @@ swiper-container {
     overflow: hidden;
     position: relative;
     cursor: pointer;
-
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.movies-genre {
+    margin: 25px 0;
 }
 
 .genres-info {
@@ -371,7 +376,10 @@ swiper-container {
     left: 0;
     background: linear-gradient(180deg, rgba(47, 47, 47, 0) 0%, #00000094 50%);
 }
-
+.open{
+    color: #ffffff;
+    cursor: pointer;
+}
 .genres:hover>.genres-info {
     color: #FFC800;
     bottom: 0px;
@@ -396,7 +404,7 @@ footer {
 }
 
 
-.footer--container {
+.footer__container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -448,7 +456,7 @@ footer {
     font-size: 20px;
 }
 
-.footers-script--container {
+.footers-script__container {
     padding: 8px 100px;
 }
 
@@ -463,3 +471,90 @@ footer {
     line-height: 140%;
 }
 
+
+.overview > p {
+    margin: 25px 0;
+    color: #D4D4D8;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+
+}
+
+
+.artists {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 12px 12px 4px -5px #1F1F1F3D;
+    overflow: hidden;
+    position: relative;
+}
+
+.artist-img {
+    background-image: url(1e4059f8957f8eb97b6c93cfa8100541.png);
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+
+}
+
+.artists-info {
+    background-color: #00000099;
+    position: absolute;
+    width: 150px;
+    height: 40px;
+    bottom: 0px;
+    left: 0px;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 120%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #D4D4D8;
+    transition: 500ms;
+}
+
+.artists:hover>.artists-info {
+    width: 100%;
+    height: 100%;
+    color: #FFC800;
+    bottom: 0;
+    left: 0;
+}
+
+.cast-list,
+.director-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 50px;
+}
+#video{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+}
+.expert--video{
+    padding: 50px ;
+    position: relative;
+    box-shadow: 0px 4px 18px 0px #587EEC2E;
+    overflow: hidden;
+    border-radius: 8px;
+    width: 800px;
+    height: 450px;
+}
+.expert--video iframe{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+}
