@@ -9,11 +9,11 @@ let genre = document.querySelector(".cards-for-genres");
 let searchInp = document.querySelector("#searchInp");
 let form = document.querySelector(".search");
 let popupBody = document.querySelector(".card-popups");
-let main = document.getElementById("#main");
-let baseUrl = "https://api.themoviedb.org/3/";
-let searchUrl = baseUrl + "search/movie?" + api_key;
+let main = document.getElementById("main");
+let baseUrl = "https://api.themoviedb.org/3";
+let searchUrl = baseUrl + "/search/movie?" + api_key;
 
-fetch("https://api.themoviedb.org/3/movie/popular?" + api_key)
+fetch(baseUrl + "/movie/popular?" + api_key)
     .then((response) => response.json())
     .then((res) => printSliderMovies(res.results))
     .catch((err) => console.error(err));
@@ -50,7 +50,7 @@ function printSliderMovies(arr) {
     });
 }
 
-fetch("https://api.themoviedb.org/3/movie/popular?" + api_key)
+fetch(baseUrl + "/movie/popular?" + api_key)
     .then((response) => response.json())
     .then((res) => MovieCards(res.results.slice(0, 6)))
     .catch((err) => console.error(err));
@@ -120,23 +120,6 @@ function printCartoonCards(arr) {
     });
 }
 
-let timerId;
-searchInp.addEventListener("input", (e) => {
-    clearTimeout(timerId);
-    timerId = setTimeout(() => {
-        fetch(`https://api.themoviedb.org/3/search/movie?${api_key}=&query
-            =${searchInp.value}`)
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.results.length === 0) {
-                    main.innerHTML = `There isn't from that products`;
-                } else {
-                    MovieCards(res.results);
-                }
-            });
-    }, 1000);
-});
-
 function createStars(rating, maxRating = 10) {
     const starsContainer = document.createElement("div");
     starsContainer.className = "stars";
@@ -169,19 +152,42 @@ function createStars(rating, maxRating = 10) {
     return starsContainer;
 }
 
-fetch("https://api.themoviedb.org/3/genre/movie/list?" + api_key)
-    .then((response) => response.json())
-    .then((res) => getGanres(res.genres.slice(0, 8)))
+fetch(baseUrl + "/genre/movie/list?" + api_key)
+    .then((res) => res.json())
+    .then((res) => getGenres(res.genres))
     .catch((err) => console.error(err));
 
-function getGanres(arr) {
+function getGenres(arr) {
     arr.forEach((e) => {
         let card = document.createElement("div");
         card.classList.add("genres");
         card.innerHTML = `
-                <div class="genres-img"></div>
-                <div class="genres-info">${e.name}</div>
-                    `;
+                <div onclick="getMoviesByGenre(${e.id}, this)" class="genres-info">${e.name}</div>
+            `;
         genre.append(card);
     });
 }
+
+function getMoviesByGenre(genreId) {
+    const url = `${baseUrl}/discover/movie?with_genres=${genreId}&${api_key}`;
+    fetch(url)
+        .then((response) => response.json())
+        .then((res) => console.log(res.results))
+        .catch((err) => console.error(err));
+}
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let searchTerm = searchInp.value.trim();
+    if (searchTerm) {
+        const url = `${searchUrl}&query=${searchTerm}`;
+        fetch(url)
+            .then((res) => res.json())
+            .then((res) => {
+                console.log(res.results);
+            })
+            .catch((err) => console.error("Search error:", err));
+    } else {
+        MovieCards();
+    }
+});
