@@ -9,6 +9,8 @@ let genre = document.querySelector(".cards-for-genres");
 let searchInp = document.querySelector("#searchInp");
 let form = document.querySelector(".search");
 let popupBody = document.querySelector(".card-popups");
+let searchResult = document.querySelector(".cards-for-search");
+let searchResultContainer = document.querySelector("#search-results");
 let main = document.getElementById("main");
 let baseUrl = "https://api.themoviedb.org/3";
 let searchUrl = baseUrl + "/search/movie?" + api_key;
@@ -52,7 +54,7 @@ function printSliderMovies(arr) {
 
 fetch(baseUrl + "/movie/popular?" + api_key)
     .then((response) => response.json())
-    .then((res) => MovieCards(res.results.slice(0, 6)))
+    .then((res) => MovieCards(res.results))
     .catch((err) => console.error(err));
 
 function MovieCards(arr) {
@@ -87,7 +89,7 @@ function MovieCards(arr) {
 fetch(animationURL)
     .then((response) => response.json())
     .then((res) => {
-        printCartoonCards(res.results.slice(0, 6));
+        printCartoonCards(res.results);
     })
     .catch((err) => console.error(err));
 
@@ -189,5 +191,99 @@ form.addEventListener("submit", (e) => {
             .catch((err) => console.error("Search error:", err));
     } else {
         MovieCards();
+    }
+});
+
+let toggleBtns = document.querySelectorAll(".open");
+
+toggleBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        let targetCards = btn.closest(".popular-movies__container")
+            ? btn
+                .closest(".popular-movies__container")
+                .querySelector(".cards-for-movies")
+            : btn
+                .closest(".popular-cartoons__container")
+                .querySelector(".cards-for-cartoons");
+
+        targetCards.classList.toggle("collapsed");
+
+        if (targetCards.classList.contains("collapsed")) {
+            btn.innerHTML = 'View Less <i class="fa-solid fa-angle-up"></i>';
+        } else {
+            btn.innerHTML = 'View More <i class="fa-solid fa-angle-down"></i>';
+        }
+    });
+});
+
+fetch(baseUrl + "/genre/movie/list?" + api_key)
+    .then((res) => res.json())
+    .then((res) => getGenres(res.genres))
+    .catch((err) => console.error(err));
+
+function getGenres(arr) {
+    arr.forEach((e) => {
+        let card = document.createElement("div");
+        card.classList.add("genres");
+        card.innerHTML = `
+                <div onclick="getMoviesByGenre(${e.id}, this)" class="genres-info">${e.name}</div>
+            `;
+        genre.append(card);
+    });
+}
+
+function getMoviesByGenre(genreId) {
+    const url = `${baseUrl}/discover/movie?with_genres=${genreId}&${api_key}`;
+    fetch(url)
+        .then((response) => response.json())
+        .then((res) => console.log(res.results))
+        .catch((err) => console.error(err));
+}
+
+function showSearchResults(results) {
+    main.innerHTML = "";
+    searchResultContainer.style.display = "block";
+    searchResult.innerHTML = "";
+    results.forEach((e) => {
+        let card = document.createElement("div");
+        card.classList.add("movie-card");
+        card.innerHTML = `
+            <div class="image-info">
+                <div class="icons">
+                    <i class="fa-regular fa-thumbs-up"></i>
+                    <i class="fa-regular fa-eye"></i>
+                    <i class="fa-solid fa-indent"></i>
+                </div>
+                <img src="${img_url + e.poster_path}" alt="${e.title}" />
+            </div>
+            <div class="movie-info">
+                <h4>${e.title}</h4>
+                <div class="rating-stars"></div>
+                <span>${e.release_date}</span>
+            </div>
+        `;
+        let ratingContainer = card.querySelector(".rating-stars");
+        let stars = createStars(e.vote_average, 10);
+        ratingContainer.append(stars);
+        searchResult.appendChild(card);
+
+    });
+}
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let searchTerm = searchInp.value.trim();
+    if (searchTerm) {
+        const url = `${searchUrl}&query=${searchTerm}`;
+        fetch(url)
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.results.length > 0 && res.adult !== false) {
+                    showSearchResults(res.results);
+                } else {
+                    main.innerHTML = "<p>No results found.</p>";
+                }
+            })
+            .catch((err) => console.error("Search error:", err));
     }
 });
