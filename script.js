@@ -8,9 +8,10 @@ let cartoonCards = document.querySelector(".cards-for-cartoons");
 let genre = document.querySelector(".cards-for-genres");
 let searchInp = document.querySelector("#searchInp");
 let form = document.querySelector(".search");
-let popupBody = document.querySelector(".card-popups");
 let searchResult = document.querySelector(".cards-for-search");
+let searchGenres = document.querySelector(".cards-for-genre-find");
 let searchResultContainer = document.querySelector("#search-results");
+let GenresResultContainer = document.querySelector("#find-genres-results");
 let main = document.getElementById("main");
 let baseUrl = "https://api.themoviedb.org/3";
 let searchUrl = baseUrl + "/search/movie?" + api_key;
@@ -134,21 +135,21 @@ function createStars(rating, maxRating = 10) {
         const star = document.createElement("span");
         star.className = "star full";
         star.innerHTML = "★";
-        starsContainer.appendChild(star);
+        starsContainer.append(star);
     }
 
     if (hasHalfStar) {
         const halfStar = document.createElement("span");
         halfStar.className = "star half";
         halfStar.innerHTML = "★";
-        starsContainer.appendChild(halfStar);
+        starsContainer.append(halfStar);
     }
 
     for (let i = 0; i < 5 - (fullStars + (hasHalfStar ? 1 : 0)); i++) {
         const emptyStar = document.createElement("span");
         emptyStar.className = "star empty";
         emptyStar.innerHTML = "★";
-        starsContainer.appendChild(emptyStar);
+        starsContainer.append(emptyStar);
     }
 
     return starsContainer;
@@ -200,11 +201,11 @@ toggleBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
         let targetCards = btn.closest(".popular-movies__container")
             ? btn
-                .closest(".popular-movies__container")
-                .querySelector(".cards-for-movies")
+                  .closest(".popular-movies__container")
+                  .querySelector(".cards-for-movies")
             : btn
-                .closest(".popular-cartoons__container")
-                .querySelector(".cards-for-cartoons");
+                  .closest(".popular-cartoons__container")
+                  .querySelector(".cards-for-cartoons");
 
         targetCards.classList.toggle("collapsed");
 
@@ -222,11 +223,12 @@ fetch(baseUrl + "/genre/movie/list?" + api_key)
     .catch((err) => console.error(err));
 
 function getGenres(arr) {
+    genre.innerHTML = "";
     arr.forEach((e) => {
         let card = document.createElement("div");
         card.classList.add("genres");
         card.innerHTML = `
-                <div onclick="getMoviesByGenre(${e.id}, this)" class="genres-info">${e.name}</div>
+                <button onclick="getMoviesByGenre(${e.id})" class="genres-info">${e.name}</button>
             `;
         genre.append(card);
     });
@@ -236,14 +238,21 @@ function getMoviesByGenre(genreId) {
     const url = `${baseUrl}/discover/movie?with_genres=${genreId}&${api_key}`;
     fetch(url)
         .then((response) => response.json())
-        .then((res) => console.log(res.results))
+        .then((res) => {
+            if (res.results.length > 0) {
+                showSearchResults(res.results);
+            } else {
+                searchResult.innerHTML =
+                    "<p>No movies found for this genre.</p>";
+            }
+        })
         .catch((err) => console.error(err));
 }
 
 function showSearchResults(results) {
     main.innerHTML = "";
-    searchResultContainer.style.display = "block";
-    searchResult.innerHTML = "";
+    GenresResultContainer.style.display = "block";
+    searchGenres.innerHTML = "";
     results.forEach((e) => {
         let card = document.createElement("div");
         card.classList.add("movie-card");
@@ -265,8 +274,7 @@ function showSearchResults(results) {
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
         ratingContainer.append(stars);
-        searchResult.appendChild(card);
-
+        searchGenres.append(card);
     });
 }
 
@@ -278,12 +286,12 @@ form.addEventListener("submit", (e) => {
         fetch(url)
             .then((res) => res.json())
             .then((res) => {
-                if (res.results.length > 0 && res.adult !== false) {
+                if (res.results.length > 0) {
                     showSearchResults(res.results);
                 } else {
-                    main.innerHTML = "<p>No results found.</p>";
+                    card.innerHTML = "<p>No results found.</p>";
                 }
             })
-            .catch((err) => console.error("Search error:", err));
+            .catch((err) => console.error(err));
     }
 });
