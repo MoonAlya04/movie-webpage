@@ -3,6 +3,7 @@ let img_url = "https://image.tmdb.org/t/p/w500";
 let img_url_original = "https://image.tmdb.org/t/p/original";
 let sweiper = document.querySelector("swiper-container");
 let animationURL = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
+let movieURL = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=28&sort_by=popularity.desc`;
 let movieCards = document.querySelector(".cards-for-movies");
 let cartoonCards = document.querySelector(".cards-for-cartoons");
 let genre = document.querySelector(".cards-for-genres");
@@ -20,6 +21,8 @@ fetch(baseUrl + "/movie/popular?" + api_key)
     .then((response) => response.json())
     .then((res) => printSliderMovies(res.results))
     .catch((err) => console.error(err));
+
+
 
 function printSliderMovies(arr) {
     arr.forEach((e) => {
@@ -49,11 +52,14 @@ function printSliderMovies(arr) {
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
         ratingContainer.append(stars);
+        card.addEventListener("click", () => {
+            window.location.href = `single.html?id=${e.id}`;
+        });
         sweiper.append(card);
     });
 }
 
-fetch(baseUrl + "/movie/popular?" + api_key)
+fetch(movieURL)
     .then((response) => response.json())
     .then((res) => MovieCards(res.results))
     .catch((err) => console.error(err));
@@ -83,6 +89,9 @@ function MovieCards(arr) {
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
         ratingContainer.append(stars);
+        card.addEventListener("click", () => {
+            window.location.href = `single.html?id=${e.id}`;
+        });
         movieCards.append(card);
     });
 }
@@ -119,6 +128,9 @@ function printCartoonCards(arr) {
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
         ratingContainer.append(stars);
+        card.addEventListener("click", () => {
+            window.location.href = `single.html?id=${e.id}`;
+        });
         cartoonCards.append(card);
     });
 }
@@ -271,6 +283,9 @@ function showSearchResults(results) {
                 <span>${e.release_date}</span>
             </div>
         `;
+        card.addEventListener("click", () => {
+            window.location.href = `single.html?id=${e.id}`;
+        });
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
         ratingContainer.append(stars);
@@ -282,7 +297,7 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
     let searchTerm = searchInp.value.trim();
     if (searchTerm) {
-        const url = `${searchUrl}&query=${searchTerm}`;
+        let url = `${searchUrl}&query=${searchTerm}`;
         fetch(url)
             .then((res) => res.json())
             .then((res) => {
@@ -295,5 +310,3 @@ form.addEventListener("submit", (e) => {
             .catch((err) => console.error(err));
     }
 });
-
-

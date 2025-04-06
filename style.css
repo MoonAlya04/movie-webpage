@@ -138,6 +138,7 @@ swiper-container {
 .slider__container img {
     border: 1px solid #ffc80055;
     width: 192px;
+    cursor: pointer;
     height: 254px;
     border-radius: 4px;
     margin: 16px 0 12px 0;
@@ -477,15 +478,14 @@ footer {
     color: #D4D4D8;
     font-weight: 400;
     font-size: 18px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    vertical-align: middle;
-
+    line-height: 30px;
+    letter-spacing: 0px;
 }
 
 
 .artists {
     width: 150px;
+    cursor: pointer;
     height: 150px;
     border-radius: 50%;
     box-shadow: 12px 12px 4px -5px #1F1F1F3D;
@@ -494,7 +494,7 @@ footer {
 }
 
 .artist-img {
-    background-image: url(1e4059f8957f8eb97b6c93cfa8100541.png);
+    filter: grayscale(100%);
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -530,8 +530,9 @@ footer {
 .cast-list,
 .director-list {
     display: flex;
-    justify-content: space-around;
+    justify-content:flex-start;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: 15px;
     margin-top: 50px;
 }
@@ -540,8 +541,10 @@ footer {
     align-items: center;
     justify-content: center;
     padding: 50px 0;
+    flex-direction: column;
+    gap: 15px;
 }
-.expert--video{
+.video-box{
     padding: 50px ;
     position: relative;
     box-shadow: 0px 4px 18px 0px #587EEC2E;
@@ -550,11 +553,18 @@ footer {
     width: 800px;
     height: 450px;
 }
-.expert--video iframe{
+.video-box iframe{
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
     object-fit: cover;
+}
+
+.movies-genre{
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
 }
