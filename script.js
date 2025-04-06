@@ -10,6 +10,7 @@ let genre = document.querySelector(".cards-for-genres");
 let searchInp = document.querySelector("#searchInp");
 let form = document.querySelector(".search");
 let searchResult = document.querySelector(".cards-for-search");
+let toggleBtns = document.querySelectorAll(".open");
 let searchGenres = document.querySelector(".cards-for-genre-find");
 let searchResultContainer = document.querySelector("#search-results");
 let GenresResultContainer = document.querySelector("#find-genres-results");
@@ -22,7 +23,22 @@ fetch(baseUrl + "/movie/popular?" + api_key)
     .then((res) => printSliderMovies(res.results))
     .catch((err) => console.error(err));
 
+fetch(movieURL)
+    .then((response) => response.json())
+    .then((res) => MovieCards(res.results))
+    .catch((err) => console.error(err));
 
+fetch(animationURL)
+    .then((response) => response.json())
+    .then((res) => {
+        printCartoonCards(res.results);
+    })
+    .catch((err) => console.error(err));
+
+fetch(baseUrl + "/genre/movie/list?" + api_key)
+    .then((res) => res.json())
+    .then((res) => getGenres(res.genres))
+    .catch((err) => console.error(err));
 
 function printSliderMovies(arr) {
     arr.forEach((e) => {
@@ -59,11 +75,6 @@ function printSliderMovies(arr) {
     });
 }
 
-fetch(movieURL)
-    .then((response) => response.json())
-    .then((res) => MovieCards(res.results))
-    .catch((err) => console.error(err));
-
 function MovieCards(arr) {
     arr.forEach((e) => {
         let card = document.createElement("div");
@@ -95,13 +106,6 @@ function MovieCards(arr) {
         movieCards.append(card);
     });
 }
-
-fetch(animationURL)
-    .then((response) => response.json())
-    .then((res) => {
-        printCartoonCards(res.results);
-    })
-    .catch((err) => console.error(err));
 
 function printCartoonCards(arr) {
     arr.forEach((e) => {
@@ -135,43 +139,6 @@ function printCartoonCards(arr) {
     });
 }
 
-function createStars(rating, maxRating = 10) {
-    const starsContainer = document.createElement("div");
-    starsContainer.className = "stars";
-
-    const ratingOutOf5 = (rating / maxRating) * 5;
-    const fullStars = Math.floor(ratingOutOf5);
-    const hasHalfStar = ratingOutOf5 - fullStars >= 0.5;
-
-    for (let i = 0; i < fullStars; i++) {
-        const star = document.createElement("span");
-        star.className = "star full";
-        star.innerHTML = "★";
-        starsContainer.append(star);
-    }
-
-    if (hasHalfStar) {
-        const halfStar = document.createElement("span");
-        halfStar.className = "star half";
-        halfStar.innerHTML = "★";
-        starsContainer.append(halfStar);
-    }
-
-    for (let i = 0; i < 5 - (fullStars + (hasHalfStar ? 1 : 0)); i++) {
-        const emptyStar = document.createElement("span");
-        emptyStar.className = "star empty";
-        emptyStar.innerHTML = "★";
-        starsContainer.append(emptyStar);
-    }
-
-    return starsContainer;
-}
-
-fetch(baseUrl + "/genre/movie/list?" + api_key)
-    .then((res) => res.json())
-    .then((res) => getGenres(res.genres))
-    .catch((err) => console.error(err));
-
 function getGenres(arr) {
     arr.forEach((e) => {
         let card = document.createElement("div");
@@ -189,61 +156,6 @@ function getMoviesByGenre(genreId) {
         .then((response) => response.json())
         .then((res) => console.log(res.results))
         .catch((err) => console.error(err));
-}
-
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let searchTerm = searchInp.value.trim();
-    if (searchTerm) {
-        const url = `${searchUrl}&query=${searchTerm}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((res) => {
-                console.log(res.results);
-            })
-            .catch((err) => console.error("Search error:", err));
-    } else {
-        MovieCards();
-    }
-});
-
-let toggleBtns = document.querySelectorAll(".open");
-
-toggleBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-        let targetCards = btn.closest(".popular-movies__container")
-            ? btn
-                  .closest(".popular-movies__container")
-                  .querySelector(".cards-for-movies")
-            : btn
-                  .closest(".popular-cartoons__container")
-                  .querySelector(".cards-for-cartoons");
-
-        targetCards.classList.toggle("collapsed");
-
-        if (targetCards.classList.contains("collapsed")) {
-            btn.innerHTML = 'View Less <i class="fa-solid fa-angle-up"></i>';
-        } else {
-            btn.innerHTML = 'View More <i class="fa-solid fa-angle-down"></i>';
-        }
-    });
-});
-
-fetch(baseUrl + "/genre/movie/list?" + api_key)
-    .then((res) => res.json())
-    .then((res) => getGenres(res.genres))
-    .catch((err) => console.error(err));
-
-function getGenres(arr) {
-    genre.innerHTML = "";
-    arr.forEach((e) => {
-        let card = document.createElement("div");
-        card.classList.add("genres");
-        card.innerHTML = `
-                <button onclick="getMoviesByGenre(${e.id})" class="genres-info">${e.name}</button>
-            `;
-        genre.append(card);
-    });
 }
 
 function getMoviesByGenre(genreId) {
@@ -293,6 +205,42 @@ function showSearchResults(results) {
     });
 }
 
+toggleBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        let targetCards = btn.closest(".popular-movies__container")
+            ? btn
+                  .closest(".popular-movies__container")
+                  .querySelector(".cards-for-movies")
+            : btn
+                  .closest(".popular-cartoons__container")
+                  .querySelector(".cards-for-cartoons");
+
+        targetCards.classList.toggle("collapsed");
+
+        if (targetCards.classList.contains("collapsed")) {
+            btn.innerHTML = 'View Less <i class="fa-solid fa-angle-up"></i>';
+        } else {
+            btn.innerHTML = 'View More <i class="fa-solid fa-angle-down"></i>';
+        }
+    });
+});
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let searchTerm = searchInp.value.trim();
+    if (searchTerm) {
+        const url = `${searchUrl}&query=${searchTerm}`;
+        fetch(url)
+            .then((res) => res.json())
+            .then((res) => {
+                console.log(res.results);
+            })
+            .catch((err) => console.error("Search error:", err));
+    } else {
+        MovieCards();
+    }
+});
+
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     let searchTerm = searchInp.value.trim();
@@ -310,3 +258,35 @@ form.addEventListener("submit", (e) => {
             .catch((err) => console.error(err));
     }
 });
+
+function createStars(rating, maxRating = 10) {
+    const starsContainer = document.createElement("div");
+    starsContainer.className = "stars";
+
+    const ratingOutOf5 = (rating / maxRating) * 5;
+    const fullStars = Math.floor(ratingOutOf5);
+    const hasHalfStar = ratingOutOf5 - fullStars >= 0.5;
+
+    for (let i = 0; i < fullStars; i++) {
+        const star = document.createElement("span");
+        star.className = "star full";
+        star.innerHTML = "★";
+        starsContainer.append(star);
+    }
+
+    if (hasHalfStar) {
+        const halfStar = document.createElement("span");
+        halfStar.className = "star half";
+        halfStar.innerHTML = "★";
+        starsContainer.append(halfStar);
+    }
+
+    for (let i = 0; i < 5 - (fullStars + (hasHalfStar ? 1 : 0)); i++) {
+        const emptyStar = document.createElement("span");
+        emptyStar.className = "star empty";
+        emptyStar.innerHTML = "★";
+        starsContainer.append(emptyStar);
+    }
+
+    return starsContainer;
+}

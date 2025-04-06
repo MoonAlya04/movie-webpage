@@ -7,96 +7,107 @@ let movieDetailsUrl = `${baseUrl}/movie/${productId}?${api_key}`;
 let movieGenres = document.querySelector(".movies-genre");
 let videoCont = document.querySelector("#video");
 let mainSection = document.querySelector(".single__main");
+let directorList = document.querySelector(".director-list");
+
+fetch(movieDetailsUrl)
+    .then((res) => res.json())
+    .then((data) => createMovieCard(data))
+    .catch((err) => console.error(err));
+
+function createMovieCard(e) {
+    const card = document.createElement("section");
+    card.innerHTML = `
+        <div class="slider__bg"
+            style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090b 85.71%), url(${
+                img_url_original + e.backdrop_path
+            });">
+            <div class="slider__container">
+                <img src="${img_url + e.poster_path}" alt="${e.title}" />
+                <h5>${e.title}</h5>
+                <p>${e.overview}</p>
+                <div class="ganre-film-card">
+                    <span>${e.release_date}</span>
+                </div>
+                <div class="rating-stars"></div>
+                <div class="btns">
+                    <button class="btn transparent-btn">Add Watchlist</button>
+                </div>
+            </div>
+        </div>
+    `;
+    const ratingContainer = card.querySelector(".rating-stars");
+    const stars = createStars(e.vote_average, 10);
+    ratingContainer.append(stars);
+    mainSection.prepend(card);
+}
 
 fetch(movieDetailsUrl)
     .then((res) => res.json())
     .then((e) => {
-        let card = document.createElement("section");
-        card.innerHTML = `
-            <div class="slider__bg"
-                style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090b 85.71%), url(${
-                    img_url_original + e.backdrop_path
-                });">
-                <div class="slider__container">
-                    <img src="${img_url + e.poster_path}" alt="${e.title}" />
-                    <h5>${e.title}</h5>
-                    <p>${e.overview}</p>
-                    <div class="ganre-film-card">
-                        <span>${e.release_date}</span>
-                    </div>
-                    <div class="rating-stars"></div>
-                    <div class="btns">
-                        <button class="btn transparent-btn">Add Watchlist</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        let ratingContainer = card.querySelector(".rating-stars");
-        let stars = createStars(e.vote_average, 10);
-        ratingContainer.append(stars);
-        mainSection.prepend(card);
-    });
-
-fetch(movieDetailsUrl)
-    .then((response) => response.json())
-    .then((movie) => {
-        movieGenres.innerHTML = "";
-        movie.genres.forEach((genre) => {
-            let genreBtn = document.createElement("button");
-            genreBtn.className = "genres-info";
-            genreBtn.textContent = genre.name;
-            movieGenres.append(genreBtn);
-        });
+        displayGenres(e.genres);
         fetch(`${baseUrl}/movie/${productId}/videos?${api_key}`)
-            .then((response) => response.json())
-            .then((videoData) => {
-                videoCont.innerHTML = "";
-                videoData.results.slice(0, 3).forEach((video) => {
-                    videoCont.innerHTML += `
-                        <div class="video-box">
-                            <iframe width="100%" height="315" 
-                                src="https://www.youtube.com/embed/${video.key}" 
-                                frameborder="0" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>`;
-                });
-            });
-
+            .then((res) => res.json())
+            .then((res) => displayVideos(res));
         fetch(`${baseUrl}/movie/${productId}/credits?${api_key}`)
-            .then((response) => response.json())
-            .then((credits) => {
-                const castList = document.querySelector(".cast-list");
-                castList.innerHTML = "";
-                credits.cast.forEach((actor) => {
-                    castList.innerHTML += `
-                        <div class="artists">
-                            <div class="artist-img" style="background-image: url(${
-                                actor.profile_path
-                                    ? img_url + actor.profile_path
-                                    : "https://via.placeholder.com/500x750?text=No+Image"
-                            })"></div>
-                            <div class="artists-info">${actor.name}</div>
-                        </div>`;
-                });
-                const directorList = document.querySelector(".director-list");
-                directorList.innerHTML = "";
-                credits.crew
-                    .filter((member) => member.job === "Director")
-                    .forEach((director) => {
-                        directorList.innerHTML += `
-                            <div class="artists">
-                                <div class="artist-img" style="background-image: url(${
-                                    director.profile_path
-                                        ? img_url + director.profile_path
-                                        : "https://via.placeholder.com/500x750?text=No+Image"
-                                })"></div>
-                                <div class="artists-info">${director.name}</div>
-                            </div>`;
-                    });
-            });
+            .then((res) => res.json())
+            .then((res) => displayCredits(res));
     })
     .catch((err) => console.error(err));
+
+function displayGenres(genres) {
+    movieGenres.innerHTML = "";
+    genres.forEach((e) => {
+        const genreBtn = document.createElement("button");
+        genreBtn.className = "genres-info";
+        genreBtn.textContent = e.name;
+        movieGenres.append(genreBtn);
+    });
+}
+
+function displayVideos(videoData) {
+    videoCont.innerHTML = "";
+    videoData.results.slice(0, 1).forEach((video) => {
+        videoCont.innerHTML += `
+            <div class="video-box">
+                <iframe width="100%" height="315" 
+                    src="https://www.youtube.com/embed/${video.key}" 
+                    frameborder="0" 
+                    allowfullscreen>
+                </iframe>
+            </div>`;
+    });
+}
+
+function displayCredits(credits) {
+    const castList = document.querySelector(".cast-list");
+    castList.innerHTML = "";
+    credits.cast.forEach((e) => {
+        castList.innerHTML += `
+            <div class="artists">
+                <div class="artist-img" style="background-image: url(${
+                    e.profile_path
+                        ? img_url + e.profile_path
+                        : "https://via.placeholder.com/500x750?text=No+Image"
+                })"></div>
+                <div class="artists-info">${e.name}</div>
+            </div>`;
+    });
+    directorList.innerHTML = "";
+    credits.crew
+        .filter((member) => member.job === "Director")
+        .forEach((e) => {
+            directorList.innerHTML += `
+                <div class="artists">
+                    <div class="artist-img" style="background-image: url(${
+                        e.profile_path
+                            ? img_url + e.profile_path
+                            : "https://via.placeholder.com/500x750?text=No+Image"
+                    })"></div>
+                    <div class="artists-info">${e.name}</div>
+                </div>`;
+        });
+}
+
 function createStars(rating, maxRating = 10) {
     const starsContainer = document.createElement("div");
     starsContainer.className = "stars";
