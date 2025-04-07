@@ -25,13 +25,13 @@ fetch(baseUrl + "/movie/popular?" + api_key)
 
 fetch(movieURL)
     .then((response) => response.json())
-    .then((res) => MovieCards(res.results))
+    .then((res) => MovieCards(res.results.slice(0, 12)))
     .catch((err) => console.error(err));
 
 fetch(animationURL)
     .then((response) => response.json())
     .then((res) => {
-        printCartoonCards(res.results);
+        printCartoonCards(res.results.slice(0, 12));
     })
     .catch((err) => console.error(err));
 
