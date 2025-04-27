@@ -1,9 +1,137 @@
+// let movieId = location.href.split("=")[1];
+
+// let api_key = "api_key=450de2ccb3594f7792ac2434c91755ce";
+// let img_url = "https://image.tmdb.org/t/p/w500";
+// let img_url_original = "https://image.tmdb.org/t/p/original";
+
+// let movieDetailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?${api_key}`;
+
+// let movieGenres = document.querySelector(".movies-genre");
+// let videoCont = document.querySelector("#video");
+// let mainSection = document.querySelector(".single__main");
+// let directorList = document.querySelector(".director-list");
+
+
+// fetch(movieDetailsUrl)
+//     .then((res) => res.json())
+//     .then((data) =>
+//         createMovieCard(data))
+//     .catch((err) => console.error(err));
+
+// function createMovieCard(e) {
+//     mainSection.innerHTML = ""
+//     const card = document.createElement("section");
+//     card.innerHTML = `
+//         <div class="slider__bg"
+//             style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090b 85.71%), url(${img_url_original + e.backdrop_path
+//         });">
+//             <div class="slider__container">
+//                 <img src="${img_url + e.poster_path}" alt="${e.title || e.name}" />
+//                 <h5>${e.title || e.name}</h5>
+//                 <p>${e.overview}</p>
+//                 <div class="ganre-film-card">
+//                     <span>${e.release_datee || e.first_air_date}</span>
+//                 </div>
+//                 <div class="rating-stars"></div>
+//                 <div class="btns">
+//                     <button class="btn transparent-btn">Add Watchlist</button>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+//     const ratingContainer = card.querySelector(".rating-stars");
+//     const stars = createStars(e.vote_average, 10);
+//     ratingContainer.append(stars);
+//     mainSection.prepend(card);
+// }
+
+// fetch(movieDetailsUrl)
+//     .then((res) => res.json())
+//     .then((e) => {
+//         displayGenres(e.genres);
+//         fetch(
+//             `https://api.themoviedb.org/3/movie/${movieId}/videos?${api_key}`
+//         )
+//             .then((res) => res.json())
+//             .then((res) => displayVideos(res));
+//         fetch(
+//             `https://api.themoviedb.org/3/movie/${movieId}/credits?${api_key}`
+//         )
+//             .then((res) => res.json())
+//             .then((res) => displayCredits(res));
+//     })
+//     .catch((err) => console.error(err));
+
+// function displayGenres(genres) {
+//     movieGenres.innerHTML = "";
+//     genres.forEach((e) => {
+//         const genreBtn = document.createElement("button");
+//         genreBtn.className = "genres-info";
+//         genreBtn.textContent = e.name;
+//         movieGenres.append(genreBtn);
+//     });
+// }
+
+// // function displayVideos(videoData) {
+// //     videoCont.innerHTML = "";
+// //     videoData.results.slice(0, 4).forEach((video) => {
+// //         videoCont.innerHTML += `
+// //             <div class="video-box">
+// //                 <iframe width="100%" height="315" 
+// //                     src="https://www.youtube.com/embed/${video.key}" 
+// //                     frameborder="0" 
+// //                     allowfullscreen>
+// //                 </iframe>
+// //             </div>`;
+// //     });
+// // }
+
+
+
+
+
+// function displayCredits(credits) {
+//     let castList = document.querySelector(".cast-list");
+//     castList.innerHTML = "";
+//     credits.cast.forEach((e) => {
+//         castList.innerHTML += `
+//             <div class="artists">
+//                 <div class="artist-img" style="background-image: url(${e.profile_path
+//                 ? img_url + e.profile_path
+//                 : "https://via.placeholder.com/500x750?text=No+Image"
+//             })"></div>
+//                 <div class="artists-info">${e.name}</div>
+//             </div>`;
+//     });
+//     directorList.innerHTML = "";
+//     credits.crew
+//         .filter((member) => member.job === "Director")
+//         .forEach((e) => {
+//             directorList.innerHTML += `
+//                 <div class="artists">
+//                     <div class="artist-img" style="background-image: url(${e.profile_path
+//                     ? img_url + e.profile_path
+//                     : "https://via.placeholder.com/500x750?text=No+Image"
+//                 })"></div>
+//                     <div class="artists-info">${e.name}</div>
+//                 </div>`;
+//         });
+// }
+
+
+
+
 let productId = location.href.split("=")[1];
+
 let api_key = "api_key=450de2ccb3594f7792ac2434c91755ce";
 let img_url = "https://image.tmdb.org/t/p/w500";
 let img_url_original = "https://image.tmdb.org/t/p/original";
-let baseUrl = "https://api.themoviedb.org/3";
-let movieDetailsUrl = `${baseUrl}/movie/${productId}?${api_key}`;
+
+let movieDetailsUrl = `https://api.themoviedb.org/3/movie/${productId}?${api_key}`;
+// let tvDetailsUrl = `https://api.themoviedb.org/3/tv/${movieId}?${api_key}`;
+
+
+
 let movieGenres = document.querySelector(".movies-genre");
 let videoCont = document.querySelector("#video");
 let mainSection = document.querySelector(".single__main");
@@ -18,9 +146,8 @@ function createMovieCard(e) {
     const card = document.createElement("section");
     card.innerHTML = `
         <div class="slider__bg"
-            style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090b 85.71%), url(${
-                img_url_original + e.backdrop_path
-            });">
+            style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090b 85.71%), url(${img_url_original + e.backdrop_path
+        });">
             <div class="slider__container">
                 <img src="${img_url + e.poster_path}" alt="${e.title}" />
                 <h5>${e.title}</h5>
@@ -45,10 +172,14 @@ fetch(movieDetailsUrl)
     .then((res) => res.json())
     .then((e) => {
         displayGenres(e.genres);
-        fetch(`${baseUrl}/movie/${productId}/videos?${api_key}`)
+        fetch(
+            `https://api.themoviedb.org/3/movie/${productId}/videos?${api_key}`
+        )
             .then((res) => res.json())
             .then((res) => displayVideos(res));
-        fetch(`${baseUrl}/movie/${productId}/credits?${api_key}`)
+        fetch(
+            `https://api.themoviedb.org/3/movie/${productId}/credits?${api_key}`
+        )
             .then((res) => res.json())
             .then((res) => displayCredits(res));
     })
@@ -66,29 +197,26 @@ function displayGenres(genres) {
 
 function displayVideos(videoData) {
     videoCont.innerHTML = "";
-    videoData.results.slice(0, 1).forEach((video) => {
+    videoData.results.slice(0, 4).forEach((video) => {
         videoCont.innerHTML += `
             <div class="video-box">
-                <iframe width="100%" height="315" 
-                    src="https://www.youtube.com/embed/${video.key}" 
-                    frameborder="0" 
-                    allowfullscreen>
-                </iframe>
+                <img class="bgImg" src="https://img.youtube.com/vi/${video.key}/hqdefault.jpg" alt="Video Thumbnail" width="100%" height="
+                100%" />
+                <img class="playBtn" src="img/play.png"
             </div>`;
     });
 }
 
 function displayCredits(credits) {
-    const castList = document.querySelector(".cast-list");
+    let castList = document.querySelector(".cast-list");
     castList.innerHTML = "";
     credits.cast.forEach((e) => {
         castList.innerHTML += `
             <div class="artists">
-                <div class="artist-img" style="background-image: url(${
-                    e.profile_path
-                        ? img_url + e.profile_path
-                        : "https://via.placeholder.com/500x750?text=No+Image"
-                })"></div>
+                <div class="artist-img" style="background-image: url(${e.profile_path
+                ? img_url + e.profile_path
+                : "https://via.placeholder.com/500x750?text=No+Image"
+            })"></div>
                 <div class="artists-info">${e.name}</div>
             </div>`;
     });
@@ -98,11 +226,10 @@ function displayCredits(credits) {
         .forEach((e) => {
             directorList.innerHTML += `
                 <div class="artists">
-                    <div class="artist-img" style="background-image: url(${
-                        e.profile_path
-                            ? img_url + e.profile_path
-                            : "https://via.placeholder.com/500x750?text=No+Image"
-                    })"></div>
+                    <div class="artist-img" style="background-image: url(${e.profile_path
+                    ? img_url + e.profile_path
+                    : "https://via.placeholder.com/500x750?text=No+Image"
+                })"></div>
                     <div class="artists-info">${e.name}</div>
                 </div>`;
         });
@@ -139,3 +266,4 @@ function createStars(rating, maxRating = 10) {
 
     return starsContainer;
 }
+

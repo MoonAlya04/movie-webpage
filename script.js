@@ -1,9 +1,16 @@
 let api_key = "api_key=450de2ccb3594f7792ac2434c91755ce";
 let img_url = "https://image.tmdb.org/t/p/w500";
 let img_url_original = "https://image.tmdb.org/t/p/original";
+let popular = "https://api.themoviedb.org/3/movie/popular?" + api_key;
+let popularAnimation = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
+let popularMovies = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=28&sort_by=popularity.desc`;
+let printAllGenres = `https://api.themoviedb.org/3/genre/movie/list?${api_key}`;
+let searchUrl = `https://api.themoviedb.org/3/search/movie?${api_key}`;
+let popularItems = `https://api.themoviedb.org/3/trending/all/day?language=en-US&${api_key}`
+let popularSeries = `https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1&${api_key}`
+
+
 let sweiper = document.querySelector("swiper-container");
-let animationURL = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
-let movieURL = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=28&sort_by=popularity.desc`;
 let movieCards = document.querySelector(".cards-for-movies");
 let cartoonCards = document.querySelector(".cards-for-cartoons");
 let genre = document.querySelector(".cards-for-genres");
@@ -14,47 +21,55 @@ let toggleBtns = document.querySelectorAll(".open");
 let searchGenres = document.querySelector(".cards-for-genre-find");
 let searchResultContainer = document.querySelector("#search-results");
 let GenresResultContainer = document.querySelector("#find-genres-results");
+let watchlistResult = document.querySelector("cards-for-watchlist");
+let printSeries = document.querySelector(".cards-for-series");
+
 let main = document.getElementById("main");
-let baseUrl = "https://api.themoviedb.org/3";
-let searchUrl = baseUrl + "/search/movie?" + api_key;
 
-fetch(baseUrl + "/movie/popular?" + api_key)
+
+fetch(popularItems)
+    .then(res => res.json())
+    .then(res => printSliderMovies(res.results))
+    .catch(err => console.error(err));
+
+fetch(popularMovies)
     .then((response) => response.json())
-    .then((res) => printSliderMovies(res.results))
+    .then((res) => MovieCards(res.results))
     .catch((err) => console.error(err));
 
-fetch(movieURL)
-    .then((response) => response.json())
-    .then((res) => MovieCards(res.results.slice(0, 12)))
-    .catch((err) => console.error(err));
-
-fetch(animationURL)
+fetch(popularAnimation)
     .then((response) => response.json())
     .then((res) => {
-        printCartoonCards(res.results.slice(0, 12));
+        printCartoonCards(res.results);
     })
     .catch((err) => console.error(err));
 
-fetch(baseUrl + "/genre/movie/list?" + api_key)
+fetch(printAllGenres)
     .then((res) => res.json())
     .then((res) => getGenres(res.genres))
     .catch((err) => console.error(err));
+
+fetch(popularSeries)
+    .then(res => res.json())
+    .then(res => creatTv(res.results))
+    .catch(err => console.error(err));
+
 
 function printSliderMovies(arr) {
     arr.forEach((e) => {
         let card = document.createElement("swiper-slide");
         card.classList.add("slider");
+        card.setAttribute("data-id", e.id);
         card.innerHTML = `
-            <div class="slider__bg" style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090B 85.71%),url(${
-                img_url_original + e.backdrop_path
+            <div class="slider__bg" style="background-image: linear-gradient(272deg, rgba(47, 47, 47, 0) 20.14%, #09090B 85.71%),url(${img_url_original + e.backdrop_path
             })">
             <div class="slider__container" >
                 <h4 class="titles">MOST POPULAR IN THIS WEEK</h4>
                 <img src="${img_url + e.poster_path}" alt="${e.title}" />
-                <h5>${e.title}</h5>
+                <h5>${e.title || e.name}</h5>
                 <p>${e.overview}</p>
                 <div class="ganre-film-card">
-                    <span>${e.release_date}</span>
+                   <span>${e.release_date || e.first_air_date}</span>
                 </div>
                 <div class="rating-stars"></div>
                 <div class="btns">
@@ -65,77 +80,67 @@ function printSliderMovies(arr) {
             </div>
             </div>
         `;
+        card.addEventListener("click", (id) => {
+            window.location.href = `single.html?id=${e.id}`;
+        });
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
         ratingContainer.append(stars);
-        card.addEventListener("click", () => {
-            window.location.href = `single.html?id=${e.id}`;
-        });
         sweiper.append(card);
     });
 }
 
+function createCards(title, image, id, release, rate) {
+    let card = document.createElement("div");
+    card.classList.add("movie-card");
+    let isInwatchlist = watchlist.includes(id.toString());
+    let heartClass = isInwatchlist ? "fa-solid" : "fa-regular";
+    card.innerHTML = `
+        <div class="image-info">
+            <div class="icons">
+                <i class="${heartClass} fa-heart" data-id="${id}" onclick="togglewatchlist(event, icon)"></i>
+            </div>
+            <img src="${img_url + image}" alt="${title}" />
+        </div>
+        <div class="movie-info">
+            <h4>${title}</h4>
+            <div class="rating-stars"></div>
+            <span>${release}</span>
+        </div>
+    `;
+
+    let ratingContainer = card.querySelector(".rating-stars");
+    let stars = createStars(rate, 10);
+    ratingContainer.append(stars);
+    card.addEventListener("click", (event) => {
+        if (event.target.classList.contains('fa-heart')) {
+            return;
+        }
+        window.location.href = `single.html?id=${id}`;
+    });
+
+    return card;
+}
+
+
 function MovieCards(arr) {
     arr.forEach((e) => {
-        let card = document.createElement("div");
-        card.classList.add("movie-card");
-        card.innerHTML = `
-                            <div class="image-info">
-                                <div class="icons">
-                                    <i class="fa-regular fa-thumbs-up"></i>
-                                    <i class="fa-regular fa-eye"></i>
-                                    <i class="fa-solid fa-indent"></i>
-                                </div>
-                                <img
-                                    src="${img_url + e.poster_path}"
-                                    alt=""
-                                />
-                            </div>
-                            <div class="movie-info">
-                                <h4>${e.title}</h4>
-                                <div class="rating-stars"></div>
-                                <span>${e.release_date}</span>
-                            </div>
-            `;
-        let ratingContainer = card.querySelector(".rating-stars");
-        let stars = createStars(e.vote_average, 10);
-        ratingContainer.append(stars);
-        card.addEventListener("click", () => {
-            window.location.href = `single.html?id=${e.id}`;
-        });
-        movieCards.append(card);
+        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        movieCards.append(printCards);
+    });
+}
+function creatTv(arr) {
+    arr.forEach((e) => {
+        let printCards = createCards(e.title || e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        printSeries.append(printCards);
     });
 }
 
+
 function printCartoonCards(arr) {
     arr.forEach((e) => {
-        let card = document.createElement("div");
-        card.classList.add("movie-card");
-        card.innerHTML = `
-                                <div class="image-info">
-                                    <div class="icons">
-                                        <i class="fa-regular fa-thumbs-up"></i>
-                                        <i class="fa-regular fa-eye"></i>
-                                        <i class="fa-solid fa-indent"></i>
-                                    </div>
-                                    <img
-                                        src="${img_url + e.poster_path}"
-                                        alt=""
-                                    />
-                                </div>
-                                <div class="movie-info">
-                                    <h4>${e.title}</h4>
-                                    <div class="rating-stars"></div>
-                                    <span>${e.release_date}</span>
-                                </div>
-                `;
-        let ratingContainer = card.querySelector(".rating-stars");
-        let stars = createStars(e.vote_average, 10);
-        ratingContainer.append(stars);
-        card.addEventListener("click", () => {
-            window.location.href = `single.html?id=${e.id}`;
-        });
-        cartoonCards.append(card);
+        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        cartoonCards.append(printCards);
     });
 }
 
@@ -150,16 +155,9 @@ function getGenres(arr) {
     });
 }
 
-function getMoviesByGenre(genreId) {
-    const url = `${baseUrl}/discover/movie?with_genres=${genreId}&${api_key}`;
-    fetch(url)
-        .then((response) => response.json())
-        .then((res) => console.log(res.results))
-        .catch((err) => console.error(err));
-}
 
 function getMoviesByGenre(genreId) {
-    const url = `${baseUrl}/discover/movie?with_genres=${genreId}&${api_key}`;
+    let url = `https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&${api_key}`;
     fetch(url)
         .then((response) => response.json())
         .then((res) => {
@@ -178,68 +176,26 @@ function showSearchResults(results) {
     GenresResultContainer.style.display = "block";
     searchGenres.innerHTML = "";
     results.forEach((e) => {
-        let card = document.createElement("div");
-        card.classList.add("movie-card");
-        card.innerHTML = `
-            <div class="image-info">
-                <div class="icons">
-                    <i class="fa-regular fa-thumbs-up"></i>
-                    <i class="fa-regular fa-eye"></i>
-                    <i class="fa-solid fa-indent"></i>
-                </div>
-                <img src="${img_url + e.poster_path}" alt="${e.title}" />
-            </div>
-            <div class="movie-info">
-                <h4>${e.title}</h4>
-                <div class="rating-stars"></div>
-                <span>${e.release_date}</span>
-            </div>
-        `;
-        card.addEventListener("click", () => {
-            window.location.href = `single.html?id=${e.id}`;
-        });
-        let ratingContainer = card.querySelector(".rating-stars");
-        let stars = createStars(e.vote_average, 10);
-        ratingContainer.append(stars);
-        searchGenres.append(card);
+        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        searchGenres.append(printCards);
     });
 }
 
-toggleBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-        let targetCards = btn.closest(".popular-movies__container")
-            ? btn
-                  .closest(".popular-movies__container")
-                  .querySelector(".cards-for-movies")
-            : btn
-                  .closest(".popular-cartoons__container")
-                  .querySelector(".cards-for-cartoons");
-
-        targetCards.classList.toggle("collapsed");
-
-        if (targetCards.classList.contains("collapsed")) {
-            btn.innerHTML = 'View Less <i class="fa-solid fa-angle-up"></i>';
-        } else {
-            btn.innerHTML = 'View More <i class="fa-solid fa-angle-down"></i>';
-        }
-    });
-});
-
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let searchTerm = searchInp.value.trim();
-    if (searchTerm) {
-        const url = `${searchUrl}&query=${searchTerm}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((res) => {
-                console.log(res.results);
-            })
-            .catch((err) => console.error("Search error:", err));
+function toggleCards(btn) {
+    let container = btn.closest("[class*='__container']");
+    if (!container) return;
+    let targetCards = container.querySelector("[class^='cards-for-']");
+    if (!targetCards) return;
+    const isExpanded = btn.getAttribute("data-expanded") === "true";
+    targetCards.classList.toggle("collapsed");
+    if (isExpanded) {
+        btn.innerHTML = 'View More <i class="fa-solid fa-angle-down"></i>';
+        btn.setAttribute("data-expanded", "false");
     } else {
-        MovieCards();
+        btn.innerHTML = 'View Less <i class="fa-solid fa-angle-up"></i>';
+        btn.setAttribute("data-expanded", "true");
     }
-});
+}
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -260,33 +216,56 @@ form.addEventListener("submit", (e) => {
 });
 
 function createStars(rating, maxRating = 10) {
-    const starsContainer = document.createElement("div");
+    let starsContainer = document.createElement("div");
     starsContainer.className = "stars";
 
-    const ratingOutOf5 = (rating / maxRating) * 5;
-    const fullStars = Math.floor(ratingOutOf5);
-    const hasHalfStar = ratingOutOf5 - fullStars >= 0.5;
+    let ratingOutOf5 = (rating / maxRating) * 5;
+    let fullStars = Math.floor(ratingOutOf5);
+    let hasHalfStar = ratingOutOf5 - fullStars >= 0.5;
 
     for (let i = 0; i < fullStars; i++) {
-        const star = document.createElement("span");
+        let star = document.createElement("span");
         star.className = "star full";
         star.innerHTML = "★";
         starsContainer.append(star);
     }
 
     if (hasHalfStar) {
-        const halfStar = document.createElement("span");
+        let halfStar = document.createElement("span");
         halfStar.className = "star half";
         halfStar.innerHTML = "★";
         starsContainer.append(halfStar);
     }
-
     for (let i = 0; i < 5 - (fullStars + (hasHalfStar ? 1 : 0)); i++) {
-        const emptyStar = document.createElement("span");
+        let emptyStar = document.createElement("span");
         emptyStar.className = "star empty";
         emptyStar.innerHTML = "★";
         starsContainer.append(emptyStar);
     }
-
     return starsContainer;
+}
+
+let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
+
+document.addEventListener('click', function (event) {
+    const heartIcon = event.target.closest('.fa-heart');
+    if (heartIcon) {
+        event.stopPropagation();
+        togglewatchlist(heartIcon);
+    }
+});
+
+function togglewatchlist(icon) {
+    const movieId = icon.getAttribute('data-id');
+    const index = watchlist.indexOf(movieId);
+
+    if (index > -1) {
+        watchlist.splice(index, 1);
+        icon.classList.replace('fa-solid', 'fa-regular');
+    } else {
+        watchlist.push(movieId);
+        icon.classList.replace('fa-regular', 'fa-solid');
+    }
+
+    localStorage.setItem('watchlist', JSON.stringify(watchlist));
 }
