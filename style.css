@@ -673,14 +673,10 @@ footer {
 }
 
 .menu-overlay.visible {
-    display: none;
     opacity: 1;
 }
 
-.menu-overlay.hidden {
-    display: none;
-    opacity: 1;
-}
+
 
 .close-btn {
     font-size: 24px;
@@ -738,6 +734,9 @@ footer {
         display: none;
     }
 
+    .menu-overlay.visible {
+        display: block;
+    }
     .menu {
         display: none;
     }
