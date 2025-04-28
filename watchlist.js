@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <span>${release}</span>
             </div>
         `;
-    
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(rate, 10);
         ratingContainer.append(stars);
@@ -57,26 +56,3 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error("Error fetching movie:", error));
     });
 });
-
-// document.addEventListener('click', function (event) {
-//     const heartIcon = event.target.closest('.fa-heart');
-//     if (heartIcon) {
-//         event.stopPropagation();
-//         togglewatchlist(heartIcon);
-//     }
-// });
-
-// function togglewatchlist(icon) {
-//     const movieId = icon.getAttribute('data-id');
-//     const index = watchlist.indexOf(movieId);
-
-//     if (index > -1) {
-//         watchlist.splice(index, 1);
-//         icon.classList.replace('fa-solid', 'fa-regular');
-//     } else {
-//         watchlist.push(movieId);
-//         icon.classList.replace('fa-regular', 'fa-solid');
-//     }
-
-//     localStorage.setItem('watchlist', JSON.stringify(watchlist));
-// }

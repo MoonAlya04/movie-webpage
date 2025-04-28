@@ -5,7 +5,7 @@ let popular = "https://api.themoviedb.org/3/movie/popular?" + api_key;
 let popularAnimation = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
 let popularMovies = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=28&sort_by=popularity.desc`;
 let printAllGenres = `https://api.themoviedb.org/3/genre/movie/list?${api_key}`;
-let searchUrl = `https://api.themoviedb.org/3/search/movie?${api_key}`;
+let searchUrl = `https://api.themoviedb.org/3/search/multi?${api_key}`;
 let popularItems = `https://api.themoviedb.org/3/trending/all/day?language=en-US&${api_key}`
 let popularSeries = `https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1&${api_key}`
 
@@ -25,6 +25,8 @@ let watchlistResult = document.querySelector("cards-for-watchlist");
 let printSeries = document.querySelector(".cards-for-series");
 
 let main = document.getElementById("main");
+
+let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
 
 
 fetch(popularItems)
@@ -69,7 +71,7 @@ function printSliderMovies(arr) {
                 <h5>${e.title || e.name}</h5>
                 <p>${e.overview}</p>
                 <div class="ganre-film-card">
-                   <span>${e.release_date || e.first_air_date}</span>
+                <span>${e.release_date || e.first_air_date}</span>
                 </div>
                 <div class="rating-stars"></div>
                 <div class="btns">
@@ -80,8 +82,8 @@ function printSliderMovies(arr) {
             </div>
             </div>
         `;
-        card.addEventListener("click", (id) => {
-            window.location.href = `single.html?id=${e.id}`;
+        card.addEventListener("click", () => {
+            window.location.href = `single.html?type=${e.media_type}&id=${e.id}`;
         });
         let ratingContainer = card.querySelector(".rating-stars");
         let stars = createStars(e.vote_average, 10);
@@ -90,7 +92,7 @@ function printSliderMovies(arr) {
     });
 }
 
-function createCards(title, image, id, release, rate) {
+function createCards(title, image, id, release, rate, type) {
     let card = document.createElement("div");
     card.classList.add("movie-card");
     let isInwatchlist = watchlist.includes(id.toString());
@@ -108,7 +110,6 @@ function createCards(title, image, id, release, rate) {
             <span>${release}</span>
         </div>
     `;
-
     let ratingContainer = card.querySelector(".rating-stars");
     let stars = createStars(rate, 10);
     ratingContainer.append(stars);
@@ -116,22 +117,21 @@ function createCards(title, image, id, release, rate) {
         if (event.target.classList.contains('fa-heart')) {
             return;
         }
-        window.location.href = `single.html?id=${id}`;
+        window.location.href = `single.html?type=${type}&id=${id}`;
     });
-
     return card;
 }
 
-
 function MovieCards(arr) {
     arr.forEach((e) => {
-        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "movie")
         movieCards.append(printCards);
     });
 }
+
 function creatTv(arr) {
     arr.forEach((e) => {
-        let printCards = createCards(e.title || e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        let printCards = createCards(e.title || e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "tv")
         printSeries.append(printCards);
     });
 }
@@ -139,7 +139,7 @@ function creatTv(arr) {
 
 function printCartoonCards(arr) {
     arr.forEach((e) => {
-        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "movie")
         cartoonCards.append(printCards);
     });
 }
@@ -176,7 +176,7 @@ function showSearchResults(results) {
     GenresResultContainer.style.display = "block";
     searchGenres.innerHTML = "";
     results.forEach((e) => {
-        let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average)
+        let printCards = createCards(e.title||e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, e.mediaType)
         searchGenres.append(printCards);
     });
 }
@@ -186,7 +186,7 @@ function toggleCards(btn) {
     if (!container) return;
     let targetCards = container.querySelector("[class^='cards-for-']");
     if (!targetCards) return;
-    const isExpanded = btn.getAttribute("data-expanded") === "true";
+    let isExpanded = btn.getAttribute("data-expanded") === "true";
     targetCards.classList.toggle("collapsed");
     if (isExpanded) {
         btn.innerHTML = 'View More <i class="fa-solid fa-angle-down"></i>';
@@ -245,20 +245,17 @@ function createStars(rating, maxRating = 10) {
     return starsContainer;
 }
 
-let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
 
 document.addEventListener('click', function (event) {
-    const heartIcon = event.target.closest('.fa-heart');
+    let heartIcon = event.target.closest('.fa-heart');
     if (heartIcon) {
         event.stopPropagation();
         togglewatchlist(heartIcon);
     }
 });
-
 function togglewatchlist(icon) {
-    const movieId = icon.getAttribute('data-id');
-    const index = watchlist.indexOf(movieId);
-
+    let movieId = icon.getAttribute('data-id');
+    let index = watchlist.indexOf(movieId);
     if (index > -1) {
         watchlist.splice(index, 1);
         icon.classList.replace('fa-solid', 'fa-regular');
@@ -266,6 +263,5 @@ function togglewatchlist(icon) {
         watchlist.push(movieId);
         icon.classList.replace('fa-regular', 'fa-solid');
     }
-
     localStorage.setItem('watchlist', JSON.stringify(watchlist));
 }
