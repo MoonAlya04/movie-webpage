@@ -131,12 +131,12 @@ function PopularArtists(arr) {
 function createCards(title, image, id, release, rate, type) {
     let card = document.createElement("div");
     card.classList.add("movie-card");
-    let isInwatchlist = watchlist.includes(id.toString());
+    let isInwatchlist = watchlist.some(item => item.id == id && item.type == type);
     let heartClass = isInwatchlist ? "fa-solid" : "fa-regular";
     card.innerHTML = `
         <div class="image-info">
             <div class="icons">
-                <i class="${heartClass} fa-heart" data-id="${id}" onclick="togglewatchlist(event, icon)"></i>
+                <i class="${heartClass} fa-heart" data-id="${id}" data-type="${type}" onclick="togglewatchlist(event)"></i>
             </div>
             <img src="${img_url + image}" alt="${title}" />
         </div>
@@ -309,18 +309,45 @@ document.addEventListener('click', function (event) {
     }
 });
 
-function togglewatchlist(icon) {
-    let movieId = icon.getAttribute('data-id');
-    let index = watchlist.indexOf(movieId);
+function togglewatchlist(event) {
+    event.stopPropagation();
+    const icon = event.target;
+    const id = icon.getAttribute('data-id');
+    const type = icon.getAttribute('data-type');
+    const index = watchlist.findIndex(item => item.id == id && item.type == type);
     if (index > -1) {
         watchlist.splice(index, 1);
-        icon.classList.replace('fa-solid', 'fa-regular');
+        icon.classList.remove('fa-solid');
+        icon.classList.add('fa-regular');
     } else {
-        watchlist.push(movieId);
-        icon.classList.replace('fa-regular', 'fa-solid');
+        watchlist.push({ id: id, type: type });
+        icon.classList.remove('fa-regular');
+        icon.classList.add('fa-solid');
     }
+
     localStorage.setItem('watchlist', JSON.stringify(watchlist));
 }
 
 
-localStorage.clear();
+
+document.addEventListener("DOMContentLoaded", () => {
+    let burgerBtn = document.getElementById("burgerBtn");
+    let mobileMenu = document.getElementById("mobileMenu");
+    let menuOverlay = document.getElementById("menuOverlay");
+    let closeBtn = document.getElementById("closeBtn");
+
+    burgerBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("visible");
+        menuOverlay.classList.toggle("visible");
+    });
+
+    menuOverlay.addEventListener("click", () => {
+        mobileMenu.classList.remove("visible");
+        menuOverlay.classList.remove("visible");
+    });
+
+    closeBtn.addEventListener("click", () => {
+        mobileMenu.classList.remove("visible");
+        menuOverlay.classList.remove("visible");
+    });
+})

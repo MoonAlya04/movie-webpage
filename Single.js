@@ -76,9 +76,12 @@ function displayVideos(videoData) {
     videoData.results.slice(0, 4).forEach((video) => {
         videoCont.innerHTML += `
             <div class="video-box">
-                <img class="bgImg" src="https://img.youtube.com/vi/${video.key}/hqdefault.jpg" alt="Video Thumbnail" width="100%" height="100%" />
-                <img class="playBtn" src="img/play.png" />
-            </div>`;
+                <iframe width="100%" height="315" 
+                    src="https://www.youtube.com/embed/${video.key}" 
+                    frameborder="0" 
+                    allowfullscreen>
+                </iframe>
+            </div>;`
     });
 }
 
@@ -134,3 +137,27 @@ function createStars(rating, maxRating = 10) {
     }
     return starsContainer;
 }
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    let burgerBtn = document.getElementById("burgerBtn");
+    let mobileMenu = document.getElementById("mobileMenu");
+    let menuOverlay = document.getElementById("menuOverlay");
+    let closeBtn = document.getElementById("closeBtn");
+
+    burgerBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("visible");
+        menuOverlay.classList.toggle("visible");
+    });
+
+    menuOverlay.addEventListener("click", () => {
+        mobileMenu.classList.remove("visible");
+        menuOverlay.classList.remove("visible");
+    });
+
+    closeBtn.addEventListener("click", () => {
+        mobileMenu.classList.remove("visible");
+        menuOverlay.classList.remove("visible");
+    });
+})

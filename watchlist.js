@@ -9,16 +9,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    function createCards(title, image, id, release, rate, type = "movie") {
+    function createCards(title, image, id, release, rate, type) {
         let card = document.createElement("div");
         card.classList.add("movie-card");
-        let isInwatchlist = watchlist.includes(id.toString());
+        let isInwatchlist = watchlist.some(w => w.id == id);
         let heartClass = isInwatchlist ? "fa-solid" : "fa-regular";
-
         card.innerHTML = `
             <div class="image-info">
                 <div class="icons">
-                    <i class="${heartClass} fa-heart" data-id="${id}" onclick="togglewatchlist(event, this)"></i>
+                    <i class="${heartClass} fa-heart" data-id="${id}" data-type="${type}" onclick="togglewatchlist(event)"></i>
                 </div>
                 <img src="${img_url + image}" alt="${title}" />
             </div>
@@ -37,15 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             window.location.href = `single.html?type=${type}&id=${id}`;
         });
-
         return card;
     }
 
-    watchlist.forEach(movieId => {
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${api_key}`)
+    watchlist.forEach(item => {
+        fetch(`https://api.themoviedb.org/3/${item.type}/${item.id}?api_key=${api_key}`)
             .then(response => response.json())
             .then(movie => {
-                const type = movie.media_type || "movie"; // Ստուգում ենք `media_type` դաշտը
+                const type = item.type;
                 const card = createCards(
                     movie.title || movie.name,
                     movie.poster_path,
