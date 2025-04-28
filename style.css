@@ -552,7 +552,7 @@ footer {
     width: 150px;
     cursor: pointer;
     height: 150px;
-    border-radius: 50%;
+    border-radius: 50px;
     box-shadow: 12px 12px 4px -5px #1F1F1F3D;
     overflow: hidden;
     position: relative;

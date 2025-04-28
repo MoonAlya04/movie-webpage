@@ -122,13 +122,14 @@ function createCards(title, image, id, release, rate, type) {
     return card;
 }
 
+
+
 function MovieCards(arr) {
     arr.forEach((e) => {
         let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "movie")
         movieCards.append(printCards);
     });
 }
-
 function creatTv(arr) {
     arr.forEach((e) => {
         let printCards = createCards(e.title || e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "tv")
@@ -171,15 +172,44 @@ function getMoviesByGenre(genreId) {
         .catch((err) => console.error(err));
 }
 
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let searchTerm = searchInp.value.trim();
+    if (searchTerm) {
+        let url = `${searchUrl}&query=${encodeURIComponent(searchTerm)}`;
+        fetch(url)
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.results.length > 0) {
+                    showSearchResults(res.results);
+                } else {
+                    const searchResultsContainer = document.querySelector(".search-results");
+                    searchResultsContainer.innerHTML = "<p>No results found.</p>";
+                }
+            })
+            .catch((err) => console.error(err));
+    }
+});
+
 function showSearchResults(results) {
     main.innerHTML = "";
     GenresResultContainer.style.display = "block";
     searchGenres.innerHTML = "";
     results.forEach((e) => {
-        let printCards = createCards(e.title||e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, e.mediaType)
+        let type = e.media_type || "movie"; 
+        let printCards = createCards(
+            e.title || e.name, 
+            e.poster_path, 
+            e.id, 
+            e.release_date || e.first_air_date, 
+            e.vote_average,
+            type
+        );
         searchGenres.append(printCards);
     });
 }
+
 
 function toggleCards(btn) {
     let container = btn.closest("[class*='__container']");
@@ -197,23 +227,6 @@ function toggleCards(btn) {
     }
 }
 
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let searchTerm = searchInp.value.trim();
-    if (searchTerm) {
-        let url = `${searchUrl}&query=${searchTerm}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.results.length > 0) {
-                    showSearchResults(res.results);
-                } else {
-                    card.innerHTML = "<p>No results found.</p>";
-                }
-            })
-            .catch((err) => console.error(err));
-    }
-});
 
 function createStars(rating, maxRating = 10) {
     let starsContainer = document.createElement("div");
@@ -253,6 +266,7 @@ document.addEventListener('click', function (event) {
         togglewatchlist(heartIcon);
     }
 });
+
 function togglewatchlist(icon) {
     let movieId = icon.getAttribute('data-id');
     let index = watchlist.indexOf(movieId);

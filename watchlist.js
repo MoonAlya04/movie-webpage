@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let api_key = "450de2ccb3594f7792ac2434c91755ce";
     const container = document.querySelector(".cards-for-watchlist"); 
     const watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
-    const img_url = "https://image.tmdb.org/t/p/w200"; 
+    const img_url = "https://image.tmdb.org/t/p/w500"; 
 
     if (watchlist.length === 0) {
         container.innerHTML = "<p>Your watchlist is empty</p>";
