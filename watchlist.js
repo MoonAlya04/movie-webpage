@@ -1,23 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
     let api_key = "450de2ccb3594f7792ac2434c91755ce";
-    const container = document.querySelector(".cards-for-watchlist"); 
+    const container = document.querySelector(".cards-for-watchlist");
     const watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
-    const img_url = "https://image.tmdb.org/t/p/w500"; 
+    const img_url = "https://image.tmdb.org/t/p/w500";
 
     if (watchlist.length === 0) {
         container.innerHTML = "<p>Your watchlist is empty</p>";
         return;
     }
 
-    function createCards(title, image, id, release, rate) {
+    function createCards(title, image, id, release, rate, type = "movie") {
         let card = document.createElement("div");
         card.classList.add("movie-card");
         let isInwatchlist = watchlist.includes(id.toString());
         let heartClass = isInwatchlist ? "fa-solid" : "fa-regular";
+
         card.innerHTML = `
             <div class="image-info">
                 <div class="icons">
-                    <i class="${heartClass} fa-heart" data-id="${id}" onclick="togglewatchlist(event, icon)"></i>
+                    <i class="${heartClass} fa-heart" data-id="${id}" onclick="togglewatchlist(event, this)"></i>
                 </div>
                 <img src="${img_url + image}" alt="${title}" />
             </div>
@@ -34,22 +35,24 @@ document.addEventListener('DOMContentLoaded', function () {
             if (event.target.classList.contains('fa-heart')) {
                 return;
             }
-            window.location.href = `single.html?id=${id}`;
+            window.location.href = `single.html?type=${type}&id=${id}`;
         });
-    
+
         return card;
     }
-    
+
     watchlist.forEach(movieId => {
         fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${api_key}`)
             .then(response => response.json())
             .then(movie => {
+                const type = movie.media_type || "movie"; // Ստուգում ենք `media_type` դաշտը
                 const card = createCards(
-                    movie.title,
+                    movie.title || movie.name,
                     movie.poster_path,
                     movie.id,
-                    movie.release_date,
-                    movie.vote_average
+                    movie.release_date || movie.first_air_date,
+                    movie.vote_average,
+                    type
                 );
                 container.append(card);
             })

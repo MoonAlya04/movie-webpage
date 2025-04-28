@@ -8,6 +8,9 @@ let printAllGenres = `https://api.themoviedb.org/3/genre/movie/list?${api_key}`;
 let searchUrl = `https://api.themoviedb.org/3/search/multi?${api_key}`;
 let popularItems = `https://api.themoviedb.org/3/trending/all/day?language=en-US&${api_key}`
 let popularSeries = `https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1&${api_key}`
+let trendingTvSeries = `https://api.themoviedb.org/3/trending/tv/day?language=en-US&${api_key}`;
+let popularArist = `https://api.themoviedb.org/3/trending/person/day?language=en-US&${api_key}`;
+
 
 
 let sweiper = document.querySelector("swiper-container");
@@ -23,6 +26,8 @@ let searchResultContainer = document.querySelector("#search-results");
 let GenresResultContainer = document.querySelector("#find-genres-results");
 let watchlistResult = document.querySelector("cards-for-watchlist");
 let printSeries = document.querySelector(".cards-for-series");
+let printTrending = document.querySelector(".cards-for-trending");
+let printPopularArists = document.querySelector(".popular-artists");
 
 let main = document.getElementById("main");
 
@@ -56,6 +61,17 @@ fetch(popularSeries)
     .then(res => creatTv(res.results))
     .catch(err => console.error(err));
 
+fetch(trendingTvSeries)
+    .then(res => res.json())
+    .then(res => printTrendingSeries(res.results))
+    .catch(err => console.error(err));
+
+fetch(popularArist)
+    .then(res => res.json())
+    .then(res => PopularArtists(res.results.splice(1, 16)))
+    .catch(err => console.error(err));
+
+
 
 function printSliderMovies(arr) {
     arr.forEach((e) => {
@@ -76,7 +92,7 @@ function printSliderMovies(arr) {
                 <div class="rating-stars"></div>
                 <div class="btns">
                     <button class="red-btn btn">Watch Trailer</button>
-                    <button class="btn transparent-btn">Add Watchlist</button>
+                    <button class="btn transparent-btn" onclick="togglewatchlist()">Add Watchlist</button>
                 </div>
                 </div>
             </div>
@@ -91,6 +107,26 @@ function printSliderMovies(arr) {
         sweiper.append(card);
     });
 }
+
+function PopularArtists(arr) {
+    const castList = document.createElement("div");
+    castList.classList.add("artist-list");
+    arr.forEach((e) => {
+        let artist = document.createElement("div");
+        artist.classList.add("artists");
+
+        artist.innerHTML = `
+            <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
+            <div class="artists-info">${e.name}</div>
+        `;
+
+        castList.append(artist);
+    });
+
+    printPopularArists.innerHTML = "";
+    printPopularArists.append(castList);
+}
+
 
 function createCards(title, image, id, release, rate, type) {
     let card = document.createElement("div");
@@ -142,6 +178,12 @@ function printCartoonCards(arr) {
     arr.forEach((e) => {
         let printCards = createCards(e.title, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "movie")
         cartoonCards.append(printCards);
+    });
+}
+function printTrendingSeries(arr) {
+    arr.forEach((e) => {
+        let printCards = createCards(e.title || e.name, e.poster_path, e.id, e.release_date || e.first_air_date, e.vote_average, "tv")
+        printTrending.append(printCards);
     });
 }
 
@@ -197,12 +239,12 @@ function showSearchResults(results) {
     GenresResultContainer.style.display = "block";
     searchGenres.innerHTML = "";
     results.forEach((e) => {
-        let type = e.media_type || "movie"; 
+        let type = e.media_type || "movie";
         let printCards = createCards(
-            e.title || e.name, 
-            e.poster_path, 
-            e.id, 
-            e.release_date || e.first_air_date, 
+            e.title || e.name,
+            e.poster_path,
+            e.id,
+            e.release_date || e.first_air_date,
             e.vote_average,
             type
         );
@@ -279,3 +321,6 @@ function togglewatchlist(icon) {
     }
     localStorage.setItem('watchlist', JSON.stringify(watchlist));
 }
+
+
+localStorage.clear();
