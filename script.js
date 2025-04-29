@@ -5,6 +5,7 @@ let popular = "https://api.themoviedb.org/3/movie/popular?" + api_key;
 let popularAnimation = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=16&sort_by=popularity.desc`;
 let popularMovies = `https://api.themoviedb.org/3/discover/movie?${api_key}&with_genres=28&sort_by=popularity.desc`;
 let printAllGenres = `https://api.themoviedb.org/3/genre/movie/list?${api_key}`;
+let printTVGenres = `https://api.themoviedb.org/3/genre/tv/list?${api_key}`;
 let searchUrl = `https://api.themoviedb.org/3/search/multi?${api_key}`;
 let popularItems = `https://api.themoviedb.org/3/trending/all/day?language=en-US&${api_key}`
 let popularSeries = `https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1&${api_key}`
@@ -16,7 +17,8 @@ let popularArist = `https://api.themoviedb.org/3/trending/person/day?language=en
 let sweiper = document.querySelector("swiper-container");
 let movieCards = document.querySelector(".cards-for-movies");
 let cartoonCards = document.querySelector(".cards-for-cartoons");
-let genre = document.querySelector(".cards-for-genres");
+let tvGenre = document.querySelector(".cards-for-tv-genres");
+let movieGenre = document.querySelector(".cards-for-movie-genres");
 let searchInp = document.querySelector("#searchInp");
 let form = document.querySelector(".search");
 let searchResult = document.querySelector(".cards-for-search");
@@ -46,14 +48,7 @@ fetch(popularMovies)
 
 fetch(popularAnimation)
     .then((response) => response.json())
-    .then((res) => {
-        printCartoonCards(res.results);
-    })
-    .catch((err) => console.error(err));
-
-fetch(printAllGenres)
-    .then((res) => res.json())
-    .then((res) => getGenres(res.genres))
+    .then((res) => printCartoonCards(res.results))
     .catch((err) => console.error(err));
 
 fetch(popularSeries)
@@ -68,8 +63,19 @@ fetch(trendingTvSeries)
 
 fetch(popularArist)
     .then(res => res.json())
-    .then(res => PopularArtists(res.results.splice(1, 16)))
+    .then(res => PopularArtists(res.results.splice(2, 16)))
     .catch(err => console.error(err));
+
+
+Promise.all([
+    fetch(printAllGenres).then(res => res.json()),
+    fetch(printTVGenres).then(res => res.json())
+])
+    .then(([movieGenres, tvGenres]) => {
+        getMovieGenres(movieGenres.genres);
+        getTvGenres(tvGenres.genres);
+    })
+    .catch(err => console.error("Error fetching genres:", err));
 
 
 
@@ -83,7 +89,7 @@ function printSliderMovies(arr) {
             })">
             <div class="slider__container" >
                 <h4 class="titles">MOST POPULAR IN THIS WEEK</h4>
-                <img src="${img_url + e.poster_path}" alt="${e.title}" />
+                <img src="${img_url + e.poster_path}" alt="${e.title || e.name}" />
                 <h5>${e.title || e.name}</h5>
                 <p>${e.overview}</p>
                 <div class="ganre-film-card">
@@ -187,33 +193,6 @@ function printTrendingSeries(arr) {
     });
 }
 
-function getGenres(arr) {
-    arr.forEach((e) => {
-        let card = document.createElement("div");
-        card.classList.add("genres");
-        card.innerHTML = `
-                <div onclick="getMoviesByGenre(${e.id}, this)" class="genres-info">${e.name}</div>
-            `;
-        genre.append(card);
-    });
-}
-
-
-function getMoviesByGenre(genreId) {
-    let url = `https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&${api_key}`;
-    fetch(url)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.results.length > 0) {
-                showSearchResults(res.results);
-            } else {
-                searchResult.innerHTML =
-                    "<p>No movies found for this genre.</p>";
-            }
-        })
-        .catch((err) => console.error(err));
-}
-
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -233,24 +212,6 @@ form.addEventListener("submit", (e) => {
             .catch((err) => console.error(err));
     }
 });
-
-function showSearchResults(results) {
-    main.innerHTML = "";
-    GenresResultContainer.style.display = "block";
-    searchGenres.innerHTML = "";
-    results.forEach((e) => {
-        let type = e.media_type || "movie";
-        let printCards = createCards(
-            e.title || e.name,
-            e.poster_path,
-            e.id,
-            e.release_date || e.first_air_date,
-            e.vote_average,
-            type
-        );
-        searchGenres.append(printCards);
-    });
-}
 
 
 function toggleCards(btn) {
@@ -351,3 +312,59 @@ document.addEventListener("DOMContentLoaded", () => {
         menuOverlay.classList.remove("visible");
     });
 })
+
+
+
+
+function getGenres(arr, type) {
+    const genreContainer = type === 'movie' ? movieGenre : tvGenre;
+    genreContainer.innerHTML = arr.map(e => `
+        <div class="genres">
+            <div onclick="getByGenre(${e.id}, '${type}', this)" class="genres-info">
+                ${e.name}
+            </div>
+        </div>
+    `).join('');
+}
+
+function getByGenre(genreId, type, element) {
+    document.querySelectorAll('.genres-info').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    const url = `https://api.themoviedb.org/3/discover/${type}?with_genres=${genreId}&${api_key}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(res => {
+            if (res.results?.length > 0) {
+                showSearchResults(res.results, type);
+            } else {
+                searchGenres.innerHTML = "<p>No results found for this genre.</p>";
+            }
+        })
+        .catch(err => console.error("Error fetching by genre:", err));
+}
+
+function getMovieGenres(arr) {
+    getGenres(arr, 'movie');
+}
+
+function getTvGenres(arr) {
+    getGenres(arr, 'tv');
+}
+
+function showSearchResults(results, type) {
+    main.innerHTML = "";
+    GenresResultContainer.style.display = "block";
+    searchGenres.innerHTML = "";
+    results.forEach(e => {
+        const mediaType = e.media_type || type;
+        searchGenres.append(createCards(
+            e.title || e.name,
+            e.poster_path,
+            e.id,
+            e.release_date || e.first_air_date,
+            e.vote_average,
+            mediaType
+        ));
+    });
+}
+

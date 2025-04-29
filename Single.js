@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     closeBtn.addEventListener("click", () => {
-        mobileMenu.classList.remove("visible");
+        mobileMenu.classList.remove("visible");ԺԺ
         menuOverlay.classList.remove("visible");
     });
 })
