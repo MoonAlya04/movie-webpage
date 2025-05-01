@@ -49,9 +49,6 @@ function createMovieCard(e) {
                     <span>${e.release_date || e.first_air_date}</span>
                 </div>
                 <div class="rating-stars"></div>
-                <div class="btns">
-                    <button class="btn transparent-btn">Add Watchlist</button>
-                </div>
             </div>
         </div>
     `;
@@ -89,23 +86,35 @@ function displayCredits(credits) {
     let castList = document.querySelector(".cast-list");
     castList.innerHTML = "";
     credits.cast.forEach((e) => {
-        castList.innerHTML += `
-            <div class="artists">
-                <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
-                <div class="artists-info">${e.name}</div>
-            </div>`;
+        const artistDiv = document.createElement("div");
+        artistDiv.classList.add("artists");
+        artistDiv.innerHTML = `
+            <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
+            <div class="artists-info">${e.name}</div>
+        `;
+        artistDiv.addEventListener("click", () => {
+            window.location.href = `singleForArtists.html?type=person&id=${e.id}`;
+        });
+        castList.appendChild(artistDiv);
     });
+
     directorList.innerHTML = "";
     credits.crew
         .filter(member => member.job === "Director")
         .forEach((e) => {
-            directorList.innerHTML += `
-                <div class="artists">
-                    <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
-                    <div class="artists-info">${e.name}</div>
-                </div>`;
+            const directorDiv = document.createElement("div");
+            directorDiv.classList.add("artists");
+            directorDiv.innerHTML = `
+                <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
+                <div class="artists-info">${e.name}</div>
+            `;
+            directorDiv.addEventListener("click", () => {
+                window.location.href = `singleForArtists.html?type=person&id=${e.id}`;
+            });
+            directorList.appendChild(directorDiv);
         });
 }
+
 
 function createStars(rating, maxRating = 10) {
     const starsContainer = document.createElement("div");
@@ -157,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     closeBtn.addEventListener("click", () => {
-        mobileMenu.classList.remove("visible");ԺԺ
+        mobileMenu.classList.remove("visible"); ԺԺ
         menuOverlay.classList.remove("visible");
     });
 })

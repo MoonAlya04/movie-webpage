@@ -243,7 +243,8 @@ swiper-container {
 #single-page,
 #search-results,
 #find-genres-results,
-#watchlist-results,#tvShows {
+#watchlist-results,
+#tvShows {
     background-color: #17171d;
     width: 100%;
 }
@@ -260,7 +261,6 @@ swiper-container {
 .watchlist-results__container {
     padding: 100px 65px 50px 65px;
 }
-
 
 .cards-for-movies,
 .cards-for-cartoons,
@@ -285,7 +285,8 @@ swiper-container {
     min-height: 100vh;
 }
 
-.artist-list {
+.artist-list,
+.card-wrapper {
     display: flex;
     justify-content: space-evenly;
     align-items: start;
@@ -297,6 +298,20 @@ swiper-container {
     overflow: hidden;
 }
 
+
+.about-person {
+    width: 700px;
+    color: #ffffff;
+    background-color: #0000002e;
+}
+
+#for-single {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: space-evenly;
+    align-items: center;
+}
 
 .cards-for-movie-genres,
 .cards-for-tv-genres {
@@ -325,7 +340,7 @@ swiper-container {
 .cards-for-cartoons.collapsed,
 .cards-for-series.collapsed,
 .cards-for-trending.collapsed {
-    max-height: 4000px;
+    max-height: 4300px;
 }
 
 
@@ -355,7 +370,7 @@ swiper-container {
     width: 100%;
     height: 284px;
     border-radius: 4px 4px 0 0;
-
+    object-fit: cover;
 }
 
 .icons {
@@ -374,12 +389,9 @@ swiper-container {
     transition: 500ms;
 }
 
-
-
 .icons:hover {
     background-color: #18181B;
 }
-
 
 .fa-heart:hover {
     color: #ff0000;
@@ -388,7 +400,6 @@ swiper-container {
 .fa-indent:hover {
     color: #00B8D9;
 }
-
 
 .fa-heart {
     color: #ff0000;
@@ -820,6 +831,18 @@ footer {
 
 }
 
+@media screen and (max-width: 547px) {
+
+    .popular-movies__container,
+    .popular-cartoons__container,
+    .genres__container,
+    .info__container,
+    .search-results__container,
+    .genre-results__container {
+        padding: 50px 20px;
+    }
+}
+
 @media screen and (max-width: 500px) {
 
     .slider__container {
@@ -837,17 +860,7 @@ footer {
     }
 }
 
-@media screen and (max-width: 480px) {
-
-    .popular-movies__container,
-    .popular-cartoons__container,
-    .genres__container,
-    .info__container,
-    .search-results__container,
-    .genre-results__container {
-        padding: 50px 20px;
-    }
-}
+@media screen and (max-width: 480px) {}
 
 
 

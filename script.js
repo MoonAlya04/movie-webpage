@@ -96,10 +96,6 @@ function printSliderMovies(arr) {
                 <span>${e.release_date || e.first_air_date}</span>
                 </div>
                 <div class="rating-stars"></div>
-                <div class="btns">
-                    <button class="red-btn btn">Watch Trailer</button>
-                    <button class="btn transparent-btn" onclick="togglewatchlist()">Add Watchlist</button>
-                </div>
                 </div>
             </div>
             </div>
@@ -114,24 +110,31 @@ function printSliderMovies(arr) {
     });
 }
 
-function PopularArtists(arr) {
-    const castList = document.createElement("div");
-    castList.classList.add("artist-list");
-    arr.forEach((e) => {
-        let artist = document.createElement("div");
-        artist.classList.add("artists");
 
-        artist.innerHTML = `
-            <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
-            <div class="artists-info">${e.name}</div>
-        `;
+// <div class="btns">
+// <button class="red-btn btn">Watch Trailer</button>
+// <button class="btn transparent-btn" onclick="togglewatchlist()">Add Watchlist</button>
+// </div>
 
-        castList.append(artist);
-    });
+// function PopularArtists(arr) {
+//     const castList = document.createElement("div");
+//     castList.classList.add("artist-list");
+//     arr.forEach((e) => {
+//         let artist = document.createElement("div");
+//         artist.classList.add("artists");
 
-    printPopularArists.innerHTML = "";
-    printPopularArists.append(castList);
-}
+//         artist.innerHTML = `
+//             <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
+//             <div class="artists-info">${e.name}</div>
+//         `;
+//         artist.addEventListener("click", () => {
+//             window.location.href = `singleForArtists.html?type=${e.media_type}&id=${e.id}`;
+//         });
+//         castList.append(artist);
+//     });
+//     printPopularArists.innerHTML = "";
+//     printPopularArists.append(castList);
+// }
 
 
 function createCards(title, image, id, release, rate, type) {
