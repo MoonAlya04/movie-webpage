@@ -30,23 +30,28 @@ let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
 function createPersonCard(person) {
     const img = person.profile_path ? img_url + person.profile_path : 'https://via.placeholder.com/300x450';
     const bio = person.biography;
-    const birthPlace = person.place_of_birth ;
+    const birthPlace = person.place_of_birth;
 
     const card = document.createElement("section");
+    
     card.innerHTML = `
-        <div class="slider__bg" style="background-color: #212121;">
+        <div class="slider__bg--for-person" style="background-color:#17171d;">
             <div class="slider__container" id="for-single">
                 <div>
                     <img src="${img}" alt="${person.name}" />
                     <h5>${person.name}</h5>
                     <span>${birthPlace}</span>
                 </div>
-                <div class="about-person">${bio}</div>
+                <div>
+                    <div class="about-person">${bio}</div>
+                </div>
             </div>
         </div>
     `;
     mainSection.prepend(card);
 }
+
+
 
 function displayFilmography(movies) {
     if (!movies?.length) return;
@@ -74,7 +79,7 @@ function displayFilmography(movies) {
     filmsFor.appendChild(wrapper);
 }
 
-function createMovieCard({ title, image, id, release, rate, type }) {
+function createMovieCard({ title, image, id, rate, type }) {
     const isInWatchlist = watchlist.some(item => item.id == id && item.type == type);
     const heartClass = isInWatchlist ? "fa-solid" : "fa-regular";
     const poster = image ? img_url + image : 'https://via.placeholder.com/300x450';
@@ -91,7 +96,7 @@ function createMovieCard({ title, image, id, release, rate, type }) {
         <div class="movie-info">
             <h4>${title}</h4>
             <div class="rating-stars"></div>
-            <span>${release}</span>
+           
         </div>
     `;
 
@@ -143,3 +148,30 @@ function togglewatchlist(e) {
 
     localStorage.setItem("watchlist", JSON.stringify(watchlist));
 }
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    let burgerBtn = document.getElementById("burgerBtn");
+    let mobileMenu = document.getElementById("mobileMenu");
+    let menuOverlay = document.getElementById("menuOverlay");
+    let closeBtn = document.getElementById("closeBtn");
+
+    burgerBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("visible");
+        menuOverlay.classList.toggle("visible");
+    });
+
+    menuOverlay.addEventListener("click", () => {
+        mobileMenu.classList.remove("visible");
+        menuOverlay.classList.remove("visible");
+    });
+
+    closeBtn.addEventListener("click", () => {
+        mobileMenu.classList.remove("visible"); 
+        menuOverlay.classList.remove("visible");
+    });
+})
+
+
+

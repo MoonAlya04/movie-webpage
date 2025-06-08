@@ -29,6 +29,7 @@ let GenresResultContainer = document.querySelector("#find-genres-results");
 let watchlistResult = document.querySelector("cards-for-watchlist");
 let printSeries = document.querySelector(".cards-for-series");
 let printTrending = document.querySelector(".cards-for-trending");
+let searchResultsContainer = document.querySelector(".search-results");
 let printPopularArists = document.querySelector(".popular-artists");
 
 let main = document.getElementById("main");
@@ -61,11 +62,6 @@ fetch(trendingTvSeries)
     .then(res => printTrendingSeries(res.results))
     .catch(err => console.error(err));
 
-fetch(popularArist)
-    .then(res => res.json())
-    .then(res => PopularArtists(res.results.splice(2, 16)))
-    .catch(err => console.error(err));
-
 
 Promise.all([
     fetch(printAllGenres).then(res => res.json()),
@@ -76,6 +72,26 @@ Promise.all([
         getTvGenres(tvGenres.genres);
     })
     .catch(err => console.error("Error fetching genres:", err));
+
+
+
+
+const input = document.querySelector('#searchInp');
+
+form.addEventListener('click', (e) => {
+    if (!form.classList.contains('expanded')) {
+        e.preventDefault();
+        form.classList.add('expanded');
+        input.focus();
+    }
+});
+
+
+document.addEventListener('click', (e) => {
+    if (!form.contains(e.target)) {
+        form.classList.remove('expanded');
+    }
+});
 
 
 
@@ -111,31 +127,6 @@ function printSliderMovies(arr) {
 }
 
 
-// <div class="btns">
-// <button class="red-btn btn">Watch Trailer</button>
-// <button class="btn transparent-btn" onclick="togglewatchlist()">Add Watchlist</button>
-// </div>
-
-// function PopularArtists(arr) {
-//     const castList = document.createElement("div");
-//     castList.classList.add("artist-list");
-//     arr.forEach((e) => {
-//         let artist = document.createElement("div");
-//         artist.classList.add("artists");
-
-//         artist.innerHTML = `
-//             <div class="artist-img" style="background-image: url(${e.profile_path ? img_url + e.profile_path : "https://via.placeholder.com/500x750?text=No+Image"})"></div>
-//             <div class="artists-info">${e.name}</div>
-//         `;
-//         artist.addEventListener("click", () => {
-//             window.location.href = `singleForArtists.html?type=${e.media_type}&id=${e.id}`;
-//         });
-//         castList.append(artist);
-//     });
-//     printPopularArists.innerHTML = "";
-//     printPopularArists.append(castList);
-// }
-
 
 function createCards(title, image, id, release, rate, type) {
     let card = document.createElement("div");
@@ -152,7 +143,6 @@ function createCards(title, image, id, release, rate, type) {
         <div class="movie-info">
             <h4>${title}</h4>
             <div class="rating-stars"></div>
-            <span>${release}</span>
         </div>
     `;
     let ratingContainer = card.querySelector(".rating-stars");
@@ -197,23 +187,31 @@ function printTrendingSeries(arr) {
 }
 
 
+
+
 form.addEventListener("submit", (e) => {
     e.preventDefault();
-    let searchTerm = searchInp.value.trim();
-    if (searchTerm) {
-        let url = `${searchUrl}&query=${encodeURIComponent(searchTerm)}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.results.length > 0) {
-                    showSearchResults(res.results);
-                } else {
-                    const searchResultsContainer = document.querySelector(".search-results");
-                    searchResultsContainer.innerHTML = "<p>No results found.</p>";
-                }
-            })
-            .catch((err) => console.error(err));
+
+    const searchTerm = searchInp.value.trim();
+    if (!searchTerm) {
+        if (window.innerWidth <= 768) {
+            form.classList.remove("expanded");
+        }
+        return;
     }
+
+    const url = `${searchUrl}&query=${encodeURIComponent(searchTerm)}`;
+
+    fetch(url)
+        .then((res) => res.json())
+        .then((res) => {
+            if (res.results.length > 0) {
+                showSearchResults(res.results);
+            } else {
+                searchResultsContainer.innerHTML = "<p>No results found.</p>";
+            }
+        })
+        .catch((err) => console.error("Search error:", err));
 });
 
 
@@ -330,21 +328,64 @@ function getGenres(arr, type) {
     `).join('');
 }
 
-function getByGenre(genreId, type, element) {
+
+
+function getByGenre(genreId, type, element, page = 1) {
     document.querySelectorAll('.genres-info').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
-    const url = `https://api.themoviedb.org/3/discover/${type}?with_genres=${genreId}&${api_key}`;
+    if (element) element.classList.add('active');
+
+    const url = `https://api.themoviedb.org/3/discover/${type}?with_genres=${genreId}&page=${page}&${api_key}`;
+
     fetch(url)
         .then(response => response.json())
         .then(res => {
             if (res.results?.length > 0) {
                 showSearchResults(res.results, type);
+                renderPagination(res.total_pages, page, (newPage) => getByGenre(genreId, type, null, newPage));
             } else {
                 searchGenres.innerHTML = "<p>No results found for this genre.</p>";
+                document.getElementById('pagination').innerHTML = '';
             }
         })
         .catch(err => console.error("Error fetching by genre:", err));
 }
+
+
+function renderPagination(totalPages, currentPage, onPageClick) {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = '';
+
+    const maxPagesToShow = 5;
+    const resultsContainer = document.querySelector('.genre-results__container');
+
+    const createBtn = (label, page, disabled = false) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.disabled = disabled;
+        btn.classList.toggle('active-page', page === currentPage);
+        if (!disabled) {
+            btn.onclick = () => {
+                onPageClick(page);
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+        }
+        return btn;
+    };
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+
+    if (currentPage > 1) paginationContainer.appendChild(createBtn('‹', currentPage - 1));
+
+    for (let i = startPage; i <= endPage; i++) {
+        paginationContainer.appendChild(createBtn(i, i));
+    }
+
+    if (currentPage < totalPages) paginationContainer.appendChild(createBtn('›', currentPage + 1));
+}
+
+
+
 
 function getMovieGenres(arr) {
     getGenres(arr, 'movie');

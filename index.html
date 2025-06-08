@@ -22,9 +22,9 @@
         <header>
             <div class="header__container">
                 <div class="headers-first-half">
-                    <a href="index.html" class="logo">
-                        <img src="img/ReelPath.png" alt="" />
-                    </a>
+                    <a href="index.html" class="logo"
+                        ><img src="img/ReelPath.png" alt=""
+                    /></a>
                     <form class="search">
                         <button type="submit">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -36,6 +36,7 @@
                         />
                     </form>
                 </div>
+
                 <div class="headers-second-half">
                     <nav>
                         <ul class="menu">
@@ -44,53 +45,42 @@
                             </li>
                             <li class="menu-list">
                                 <a href="#popular-movies" class="menu-link"
-                                    >Films</a
+                                    >Movies</a
                                 >
                             </li>
                             <li class="menu-list">
-                                <a href="#tvShows" class="menu-link"
-                                    >TV</a
-                                >
+                                <a href="#tvShows" class="menu-link">TV</a>
                             </li>
                             <li class="menu-list">
                                 <a class="menu-link" href="watchlist.html"
                                     >Watchlist</a
                                 >
                             </li>
-                            <button class="btn-sign-in">Sign in</button>
-                            <div class="a">
-                                <img src="img/logonum2.png" alt="" />
-                            </div>
                         </ul>
                     </nav>
                 </div>
                 <div class="mobile-menu hidden" id="mobileMenu">
-                    <button class="close-btn" id="closeBtn">✕</button>
+                    <button class="close-btn" id="closeBtn">x</button>
                     <ul class="menu">
                         <li class="menu-list">
                             <a href="#genres" class="menu-link">Genres</a>
                         </li>
                         <li class="menu-list">
                             <a href="#popular-movies" class="menu-link"
-                                >Films</a
+                                >Movies</a
                             >
                         </li>
                         <li class="menu-list">
-                            <a href="#tvShows" class="menu-link"
-                                >TV</a
-                            >
+                            <a href="#tvShows" class="menu-link">TV</a>
                         </li>
                         <li class="menu-list">
                             <a class="menu-link" href="watchlist.html"
                                 >Watchlist</a
                             >
                         </li>
-
-                        <div class="a">
-                            <img src="img/logonum2.png" alt="" />
-                        </div>
                     </ul>
                 </div>
+
                 <div class="burger-menu">
                     <div class="menu-overlay" id="menuOverlay"></div>
                     <button id="burgerBtn">
@@ -99,6 +89,7 @@
                 </div>
             </div>
         </header>
+
         <main id="main">
             <section id="slider">
                 <div class="swiper-container">
@@ -111,14 +102,17 @@
                         centered-slides="true"
                         autoplay-delay="2500"
                         autoplay-disable-on-interaction="false"
-                    >
-                    </swiper-container>
+                    ></swiper-container>
                 </div>
             </section>
             <section id="genres">
                 <div class="genres__container">
                     <h4 class="titles">Movie Genres</h4>
                     <div class="cards-for-movie-genres"></div>
+                </div>
+            </section>
+            <section id="genres">
+                <div class="genres__container">
                     <h4 class="titles">TV Genres</h4>
                     <div class="cards-for-tv-genres"></div>
                 </div>
@@ -153,6 +147,7 @@
                     <div class="cards-for-cartoons"></div>
                 </div>
             </section>
+        
             <section id="tvShows">
                 <div class="popular-cartoons__container">
                     <div class="titles-and-more">
@@ -169,7 +164,7 @@
                 </div>
             </section>
             <section id="popular-cartoons">
-                <div class="popular-cartoons__container">
+                <div class="popular-cartoons__container" >
                     <div class="titles-and-more">
                         <h4 class="titles">POPULAR TV SHOWS</h4>
                         <p
@@ -183,14 +178,6 @@
                     <div class="cards-for-trending"></div>
                 </div>
             </section>
-            <!-- <section id="popular-cartoons">
-                <div class="popular-cartoons__container">
-                    <div class="titles-and-more">
-                        <h4 class="titles">POPULAR ARTISTS</h4>
-                    </div>
-                    <div class="popular-artists"></div>
-                </div>
-            </section> -->
         </main>
         <section id="search-results">
             <div class="search-results__container">
@@ -202,6 +189,7 @@
             <div class="genre-results__container">
                 <h4 class="titles">Your Result</h4>
                 <div class="cards-for-genre-find"></div>
+                <div id="pagination" class="pagination-container"></div>
             </div>
         </section>
         <footer>
@@ -209,11 +197,11 @@
                 <div class="footer-info">
                     <div class="infos my-account">
                         <div class="white-line"></div>
-                        <a href="#">My Account</a>
-                        <a href="#">Overview</a>
-                        <a href="#">Order History</a>
-                        <a href="#">watchlist</a>
-                        <a href="#">Account information</a>
+                        <a href="#genres">Genres</a>
+                        <a href="watchlist.html">Watchlist</a>
+                        <a href="#popular-movies">Most Popular Movies</a>
+                        <a href="#tvShows">Most Popular TV Shows</a>
+                        <a href="#slider">Most Popular In This Week</a>
                     </div>
                 </div>
                 <div class="footer-logo-and-media">
@@ -228,10 +216,9 @@
                 <p>©2025 Movies</p>
             </div>
         </div>
+
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
         <script src="script.js"></script>
+    
     </body>
 </html>
-
-<!-- autoplay-delay="2500"
-autoplay-disable-on-interaction="false" -->

@@ -1,63 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>watchlist</title>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        />
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
-        <header>
-            <div class="header__container">
-                <div class="headers-first-half">
-                    <a href="index.html" class="logo">
-                        <img src="img/ReelPath.png" alt="" />
-                    </a>
-                </div>
-                <div class="headers-second-half">
-                    <div class="menu">
-                        <button class="btn-sign-in">Sign in</button>
-                        <div class="aside-logo">
-                            <img src="img/logonum2.png" alt="" />
-                        </div>
-                    </div>
-                </div>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>watchlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script
+    type="module"
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+></script>
+<script
+    nomodule
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+></script>
+</head>
+
+<body>
+    <header>
+        <div class="header__container">
+            <div class="headers-first-half">
+                <a href="index.html" class="logo"
+                    ><img src="img/ReelPath.png" alt=""
+                /></a>
+                <form class="search">
+                    <button type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <input
+                        id="searchInp"
+                        type="text"
+                        placeholder="Search in RP"
+                    />
+                </form>
             </div>
-        </header>
-        <section id="watchlist-results">
-            <div class="watchlist-results__container">
-                <h4 class="titles">Your Save</h4>
-                <div class="cards-for-watchlist"></div>
+
+            <div class="headers-second-half">
+                <nav>
+                    <ul class="menu">
+                        <li class="menu-list">
+                            <a href="index.html#popular-movies" class="menu-link">Genres</a>
+                        </li>
+                        <li class="menu-list">
+                            <a href="index.html#popular-movies" class="menu-link"
+                                >Movies</a
+                            >
+                        </li>
+                        <li class="menu-list">
+                            <a href="index.html#tvShows" class="menu-link">TV</a>
+                        </li>
+                        <li class="menu-list">
+                            <a class="menu-link" href="watchlist.html"
+                                >Watchlist</a
+                            >
+                        </li>
+                    </ul>
+                </nav>
             </div>
-        </section>
-        <footer>
-            <div class="footer__container">
-                <div class="footer-info">
-                    <div class="infos my-account">
-                        <div class="white-line"></div>
-                        <a href="#">My Account</a>
-                        <a href="#">Overview</a>
-                        <a href="#">Order History</a>
-                        <a href="#">watchlist</a>
-                        <a href="#">Account information</a>
-                    </div>
-                </div>
-                <div class="footer-logo-and-media">
-                    <div class="footer-logo">
-                        <img src="img/ReelPath.png" alt="" />
-                    </div>
-                </div>
+            <div class="mobile-menu hidden" id="mobileMenu">
+                <button class="close-btn" id="closeBtn">x</button>
+                <ul class="menu">
+                    <li class="menu-list">
+                        <a href="index.html#genres" class="menu-link">Genres</a>
+                    </li>
+                    <li class="menu-list">
+                        <a href="index.html#popular-movies" class="menu-link"
+                            >Movies</a
+                        >
+                    </li>
+                    <li class="menu-list">
+                        <a href="index.html#tvShows" class="menu-link">TV</a>
+                    </li>
+                    <li class="menu-list">
+                        <a class="menu-link" href="watchlist.html"
+                            >Watchlist</a
+                        >
+                    </li>
+                </ul>
             </div>
-        </footer>
-        <div class="footers-script">
-            <div class="footers-script__container">
-                <p>©2025 Movies</p>
+
+            <div class="burger-menu">
+                <div class="menu-overlay" id="menuOverlay"></div>
+                <button id="burgerBtn">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </button>
             </div>
         </div>
-        <script src="script.js"></script>
-        <script src="watchlist.js"></script>
-    </body>
+    </header>
+    <section id="watchlist-results">
+        <div class="watchlist-results__container">
+            <h4 class="titles">Your Save</h4>
+            <div class="cards-for-watchlist"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer__container">
+            <div class="footer-info">
+                <div class="infos my-account">
+                    <div class="white-line"></div>
+                    <a href="index.html">ReelPath</a>
+                    <a href="index.html#popular-movies">Genres</a>
+                    <a href="watchlist.html">Watchlist</a>
+                    <a href="index.html#slider">Most Popular In This Week</a>
+                </div>
+            </div>
+            <div class="footer-logo-and-media">
+                <div class="footer-logo">
+                    <img src="img/ReelPath.png" alt="" />
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footers-script">
+        <div class="footers-script__container">
+            <p>©2025 Movies</p>
+        </div>
+    </div>
+    <!-- <script src="script.js"></script> -->
+    <script src="watchlist.js"></script>
+</body>
+
 </html>
